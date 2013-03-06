@@ -76,17 +76,49 @@ pipeline.as = function(key){
   return this.push('as', key);
 }
 
+/**
+ * Append "greater than or equal to" condition to pipeline.
+ *
+ * @param {String}       key  The property to compare `val` to.
+ * @param {Number|Date}  val
+ * @api public
+ */
+
 pipeline.gte = function(key, val){
   return this.condition('gte', key, val);
 }
+
+/**
+ * Append "greater than" condition to pipeline.
+ *
+ * @param {String}       key  The property to compare `val` to.
+ * @param {Number|Date}  val
+ * @api public
+ */
 
 pipeline.gt = function(key, val){
   return this.condition('gt', key, val);
 }
 
+/**
+ * Append "less than or equal to" condition to pipeline.
+ *
+ * @param {String}       key  The property to compare `val` to.
+ * @param {Number|Date}  val
+ * @api public
+ */
+
 pipeline.lte = function(key, val){
   return this.condition('lte', key, val);
 }
+
+/**
+ * Append "less than" condition to pipeline.
+ *
+ * @param {String}       key  The property to compare `val` to.
+ * @param {Number|Date}  val
+ * @api public
+ */
 
 pipeline.lt = function(key, val){
   return this.condition('lt', key, val);
@@ -133,6 +165,19 @@ pipeline.remove = function(data){
 
 pipeline.query = function(){
   return this.action('query');
+}
+
+/**
+ * Tell adapter to pipe data into `fn` at this point.
+ *
+ * XXX: Not sure if this is an "action" 
+ * or a different class of operations.
+ *
+ * @api public
+ */
+
+pipeline.pipe = function(fn){
+  return this.action('pipe', fn);
 }
 
 /**
