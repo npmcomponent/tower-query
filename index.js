@@ -105,7 +105,37 @@ pipeline.remove = function(data){
 }
 
 /**
- * Pushes a `"relation"` into the pipeline.
+ * Sort ascending by `key`.
+ *
+ * If the key is a property name, it will
+ * be combined with the table/collection name
+ * defined somewhere earlier in the pipeline.
+ *
+ * @param {String} key
+ * @api public
+ */
+
+pipeline.asc = function(key){
+  return this.order(1, key);
+}
+
+/**
+ * Sort descending by `key`.
+ *
+ * If the key is a property name, it will
+ * be combined with the table/collection name
+ * defined somewhere earlier in the pipeline.
+ *
+ * @param {String} key
+ * @api public
+ */
+
+pipeline.desc = function(key){
+  return this.order(-1, key);
+}
+
+/**
+ * Pushes a `"relation"` onto the pipeline.
  *
  * @param {String} type
  * @param {String} key
@@ -117,7 +147,7 @@ pipeline.relation = function(type, key){
 }
 
 /**
- * Pushes a `"condition"` into the pipeline.
+ * Pushes a `"condition"` onto the pipeline.
  *
  * @param {String} op Operator string
  * @param {String} key
@@ -130,7 +160,7 @@ pipeline.condition = function(op, key, val){
 }
 
 /**
- * Pushes an `"action"` into the pipeline.
+ * Pushes an `"action"` onto the pipeline.
  *
  * Example:
  *
@@ -147,10 +177,20 @@ pipeline.action = function(type, data){
 }
 
 /**
- * 
+ * Pushes a sort direction onto the pipeline.
+
+ * @param {Integer} dir   Direction it should point (-1, 1, 0).
+ * @param {String}  key   The property to sort on.
+ * @api private
  */
 
+pipeline.order = function(dir, key){
+  return this.push('order', dir, key);
+}
+
 /**
+ * Push criterion onto pipeline.
+ * 
  * @api private
  */
 
