@@ -92,16 +92,47 @@ pipeline.lt = function(key, val){
   return this.condition('lt', key, val);
 }
 
+/**
+ * Tell adapter to insert `data` 
+ * (or matching criteria) at this point.
+ *
+ * @api public
+ */
+
 pipeline.insert = function(data){
   return this.action('insert', data);
 }
+
+/**
+ * Tell adapter to update `data` 
+ * (or matching criteria) at this point.
+ *
+ * @api public
+ */
 
 pipeline.update = function(data){
   return this.action('update', data);
 }
 
+/**
+ * Tell adapter to remove `data` 
+ * (or matching criteria) at this point.
+ *
+ * @api public
+ */
+
 pipeline.remove = function(data){
   return this.action('remove', data);
+}
+
+/**
+ * Tell adapter to query at this point.
+ *
+ * @api public
+ */
+
+pipeline.query = function(){
+  return this.action('query');
 }
 
 /**
