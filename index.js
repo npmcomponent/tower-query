@@ -43,6 +43,12 @@ pipeline.where = function(key, val){
  * In a relational/document database, the records with
  * a foreign key pointing to this record or set of records.
  *
+ * Example:
+ *
+ *    pipeline().start('users')
+ *      .incoming('friends')
+ *      .incoming('friends');
+ *
  * @param {String} key
  * @api public
  */
@@ -56,6 +62,12 @@ pipeline.incoming = function(key){
  * In a relational/document database, the record this
  * record points to via its foreign key.
  *
+ * Example:
+ *
+ *    pipeline().start('users')
+ *      .outgoing('friends')
+ *      .outgoing('friends');
+ *
  * @param {String} key
  * @api public
  */
@@ -68,6 +80,10 @@ pipeline.outgoing = function(key){
  * What the variable should be called for the data returned.
  * References the previous item in the pipeline.
  *
+ * Example:
+ *
+ *    pipeline().start('users').as('people');
+ *
  * @param {String} key
  * @api public
  */
@@ -78,6 +94,10 @@ pipeline.as = function(key){
 
 /**
  * Append "greater than or equal to" condition to pipeline.
+ *
+ * Example:
+ *
+ *    pipeline().start('users').gte('likeCount', 10);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
@@ -91,6 +111,10 @@ pipeline.gte = function(key, val){
 /**
  * Append "greater than" condition to pipeline.
  *
+ * Example:
+ *
+ *    pipeline().start('users').gt('likeCount', 10);
+ *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
@@ -103,6 +127,10 @@ pipeline.gt = function(key, val){
 /**
  * Append "less than or equal to" condition to pipeline.
  *
+ * Example:
+ *
+ *    pipeline().start('users').lte('likeCount', 200);
+ *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
@@ -114,6 +142,10 @@ pipeline.lte = function(key, val){
 
 /**
  * Append "less than" condition to pipeline.
+ *
+ * Example:
+ *
+ *    pipeline().start('users').lt('likeCount', 200);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
@@ -128,6 +160,11 @@ pipeline.lt = function(key, val){
  * Tell adapter to insert `data` 
  * (or matching criteria) at this point.
  *
+ * Example:
+ *
+ *    pipeline().start('users')
+ *      .insert({ email: 'john.smith@gmail.com' });
+ *
  * @api public
  */
 
@@ -138,6 +175,10 @@ pipeline.insert = function(data){
 /**
  * Tell adapter to update `data` 
  * (or matching criteria) at this point.
+ *
+ * Example:
+ *
+ *    pipeline().start('users').update({ likeCount: 0 });
  *
  * @api public
  */
@@ -150,6 +191,10 @@ pipeline.update = function(data){
  * Tell adapter to remove `data` 
  * (or matching criteria) at this point.
  *
+ * Example:
+ *
+ *    pipeline().start('users').remove();
+ *
  * @api public
  */
 
@@ -160,11 +205,15 @@ pipeline.remove = function(data){
 /**
  * Tell adapter to query at this point.
  *
+ * Example:
+ *
+ *    pipeline().start('users').query(fn);
+ *
  * @api public
  */
 
-pipeline.query = function(){
-  return this.action('query');
+pipeline.query = function(fn){
+  return this.action('query', fn);
 }
 
 /**
@@ -172,6 +221,10 @@ pipeline.query = function(){
  *
  * XXX: Not sure if this is an "action" 
  * or a different class of operations.
+ *
+ * Example:
+ *
+ *    pipeline().start('users').pipe(req);
  *
  * @api public
  */
@@ -187,6 +240,10 @@ pipeline.pipe = function(fn){
  * be combined with the table/collection name
  * defined somewhere earlier in the pipeline.
  *
+ * Example:
+ *
+ *    pipeline().start('users').asc('createdAt');
+ *
  * @param {String} key
  * @api public
  */
@@ -201,6 +258,10 @@ pipeline.asc = function(key){
  * If the key is a property name, it will
  * be combined with the table/collection name
  * defined somewhere earlier in the pipeline.
+ *
+ * Example:
+ *
+ *    pipeline().start('users').desc('createdAt');
  *
  * @param {String} key
  * @api public
