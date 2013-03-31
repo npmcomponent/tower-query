@@ -374,3 +374,20 @@ Pipeline.prototype.push = function(){
   this.pipes.push(slice.call(arguments));
   return this;
 }
+
+/**
+ * Get the number of pipes in the pipeline.
+ */
+
+Pipeline.prototype.size = function(){
+  return this.pipes.length;
+}
+
+/**
+ * Reset all pipes.
+ */
+
+Pipeline.prototype.reset = function(){
+  this.pipes = [];
+  return this;
+}

@@ -1,7 +1,5 @@
 # Tower Pipeline
 
-<!-- [![Build Status](https://secure.travis-ci.org/tower/pipeline.png)](http://travis-ci.org/tower/pipeline) -->
-
 ## Installation
 
 node:
@@ -16,28 +14,26 @@ browser:
 component install tower/pipeline
 ```
 
-## API
+## Example
 
-Nothing yet.
-
-This is a `tower-controller` mixin.
+This is a `tower-pipeline` mixin.
 
 ``` javascript
 var pipeline = require('tower-pipeline');
-```
 
-## Running Tests
+var pipes = pipeline()
+  .start('users')
+  .gte('likeCount', 10)
+  .lte('likeCount', 200)
+  .pipes;
 
-```
-git clone git://github.com/tower/pipeline.git
-cd tower-pipeline
-npm install
-```
+var expected = [
+    ['start', 'users']
+  , ['condition', 'gte', 'likeCount', 10]
+  , ['condition', 'lte', 'likeCount', 200]
+];
 
-then run the tests:
-
-```
-mocha
+assert.deepEqual(expected, pipes);
 ```
 
 ## License
