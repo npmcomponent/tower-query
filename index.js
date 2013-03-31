@@ -12,14 +12,25 @@ var slice = [].slice;
 module.exports = pipeline;
 
 /**
- * Wrap an array for chaining query criteria.
- *
- * XXX: should this be a class instead?
+ * Expose `Pipeline`.
  */
 
-function pipeline(criteria) {
-  pipeline.criteria = criteria || [];
-  return pipeline;
+module.exports.Pipeline = Pipeline;
+
+/**
+ * Wrap an array for chaining query criteria.
+ */
+
+function pipeline(pipes) {
+  return new Pipeline(pipes);
+}
+
+/**
+ * Construct a new `Pipeline` instance.
+ */
+
+function Pipeline(pipes) {
+  this.pipes = pipes || [];
 }
 
 /**
@@ -30,11 +41,11 @@ function pipeline(criteria) {
  * @api public
  */
 
-pipeline.start = function(key, val){
+Pipeline.prototype.start = function(key, val){
   return this.push('start', key);
 }
 
-pipeline.where = function(key, val){
+Pipeline.prototype.where = function(key, val){
   return this.condition('eq', key, val);
 }
 
@@ -53,7 +64,7 @@ pipeline.where = function(key, val){
  * @api public
  */
 
-pipeline.incoming = function(key){
+Pipeline.prototype.incoming = function(key){
   return this.relation('incoming', key);
 }
 
@@ -72,7 +83,7 @@ pipeline.incoming = function(key){
  * @api public
  */
 
-pipeline.outgoing = function(key){
+Pipeline.prototype.outgoing = function(key){
   return this.relation('outgoing', key);
 }
 
@@ -88,7 +99,7 @@ pipeline.outgoing = function(key){
  * @api public
  */
 
-pipeline.as = function(key){
+Pipeline.prototype.as = function(key){
   return this.push('as', key);
 }
 
@@ -104,7 +115,7 @@ pipeline.as = function(key){
  * @api public
  */
 
-pipeline.gte = function(key, val){
+Pipeline.prototype.gte = function(key, val){
   return this.condition('gte', key, val);
 }
 
@@ -120,7 +131,7 @@ pipeline.gte = function(key, val){
  * @api public
  */
 
-pipeline.gt = function(key, val){
+Pipeline.prototype.gt = function(key, val){
   return this.condition('gt', key, val);
 }
 
@@ -136,7 +147,7 @@ pipeline.gt = function(key, val){
  * @api public
  */
 
-pipeline.lte = function(key, val){
+Pipeline.prototype.lte = function(key, val){
   return this.condition('lte', key, val);
 }
 
@@ -152,7 +163,7 @@ pipeline.lte = function(key, val){
  * @api public
  */
 
-pipeline.lt = function(key, val){
+Pipeline.prototype.lt = function(key, val){
   return this.condition('lt', key, val);
 }
 
@@ -168,7 +179,7 @@ pipeline.lt = function(key, val){
  * @api public
  */
 
-pipeline.insert = function(data){
+Pipeline.prototype.insert = function(data){
   return this.action('insert', data);
 }
 
@@ -183,7 +194,7 @@ pipeline.insert = function(data){
  * @api public
  */
 
-pipeline.update = function(data){
+Pipeline.prototype.update = function(data){
   return this.action('update', data);
 }
 
@@ -198,7 +209,7 @@ pipeline.update = function(data){
  * @api public
  */
 
-pipeline.remove = function(data){
+Pipeline.prototype.remove = function(data){
   return this.action('remove', data);
 }
 
@@ -212,7 +223,7 @@ pipeline.remove = function(data){
  * @api public
  */
 
-pipeline.query = function(fn){
+Pipeline.prototype.query = function(fn){
   return this.action('query', fn);
 }
 
@@ -229,8 +240,36 @@ pipeline.query = function(fn){
  * @api public
  */
 
-pipeline.pipe = function(fn){
+Pipeline.prototype.pipe = function(fn){
   return this.action('pipe', fn);
+}
+
+/**
+ * Tell adapter to count at this point.
+ *
+ * Example:
+ *
+ *    pipeline().start('users').count(fn);
+ *
+ * @api public
+ */
+
+Pipeline.prototype.count = function(fn){
+  return this.action('count', fn);
+}
+
+/**
+ * Tell adapter to check if records matching criteria exist.
+ *
+ * Example:
+ *
+ *    pipeline().start('users').exists(fn);
+ *
+ * @api public
+ */
+
+Pipeline.prototype.exists = function(fn){
+  return this.action('exists', fn);
 }
 
 /**
@@ -248,7 +287,7 @@ pipeline.pipe = function(fn){
  * @api public
  */
 
-pipeline.asc = function(key){
+Pipeline.prototype.asc = function(key){
   return this.order(1, key);
 }
 
@@ -267,7 +306,7 @@ pipeline.asc = function(key){
  * @api public
  */
 
-pipeline.desc = function(key){
+Pipeline.prototype.desc = function(key){
   return this.order(-1, key);
 }
 
@@ -279,7 +318,7 @@ pipeline.desc = function(key){
  * @api private
  */
 
-pipeline.relation = function(type, key){
+Pipeline.prototype.relation = function(type, key){
   return this.push('relation', type, key);
 }
 
@@ -292,7 +331,7 @@ pipeline.relation = function(type, key){
  * @api private
  */
 
-pipeline.condition = function(op, key, val){
+Pipeline.prototype.condition = function(op, key, val){
   return this.push('condition', op, key, val);
 }
 
@@ -309,7 +348,7 @@ pipeline.condition = function(op, key, val){
  * @api private
  */
 
-pipeline.action = function(type, data){
+Pipeline.prototype.action = function(type, data){
   return this.push('action', type, data);
 }
 
@@ -321,7 +360,7 @@ pipeline.action = function(type, data){
  * @api private
  */
 
-pipeline.order = function(dir, key){
+Pipeline.prototype.order = function(dir, key){
   return this.push('order', dir, key);
 }
 
@@ -331,7 +370,7 @@ pipeline.order = function(dir, key){
  * @api private
  */
 
-pipeline.push = function(){
-  this.criteria.push(slice.call(arguments));
+Pipeline.prototype.push = function(){
+  this.pipes.push(slice.call(arguments));
   return this;
 }

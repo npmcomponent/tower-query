@@ -1,13 +1,13 @@
 var pipeline = require('..')
-  , assert = require('chai').assert;
+  , assert = require('assert');
 
 describe('pipeline', function() {
   it('should chain', function() {
-    var criteria = pipeline()
+    var pipes = pipeline()
       .start('users')
       .gte('likeCount', 10)
       .lte('likeCount', 200)
-      .criteria;
+      .pipes;
 
     var expected = [
         ['start', 'users']
@@ -15,6 +15,6 @@ describe('pipeline', function() {
       , ['condition', 'lte', 'likeCount', 200]
     ];
 
-    assert.deepEqual(expected, criteria);
+    assert.deepEqual(expected, pipes);
   });
 });

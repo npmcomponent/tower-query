@@ -1,12 +1,5 @@
 {
   "name": "tower-pipeline",
   "version": "0.0.1",
-  "devDependencies": {
-    "chai": "~1.4.2",
-    "mocha": "~1.8.1"
-  },
-  "scripts": {
-    "test": "mocha"
-  },
   "main": "./index.js"
 }
