@@ -44,6 +44,7 @@ of the information needed to assess their relationship.
 - http://www.cs.utexas.edu/~ml/papers/spk-emnlp-05.pdf
 - http://stackoverflow.com/questions/1482619/shortest-path-for-a-dag
 - http://www.columbia.edu/~cs2035/courses/ieor6614.S09/sp.pdf
+- http://www.stoimen.com/blog/2012/10/28/computer-algorithms-shortest-path-in-a-directed-acyclic-graph/
 
 ## License
 
