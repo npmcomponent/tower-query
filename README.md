@@ -36,6 +36,15 @@ var expected = [
 assert.deepEqual(expected, pipes);
 ```
 
+## Notes
+
+The shortest path between two entities in a dependency graph offers a very condensed representation
+of the information needed to assess their relationship.
+
+- http://www.cs.utexas.edu/~ml/papers/spk-emnlp-05.pdf
+- http://stackoverflow.com/questions/1482619/shortest-path-for-a-dag
+- http://www.columbia.edu/~cs2035/courses/ieor6614.S09/sp.pdf
+
 ## License
 
 MIT

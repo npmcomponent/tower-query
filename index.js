@@ -310,6 +310,14 @@ Pipeline.prototype.desc = function(key){
   return this.order(-1, key);
 }
 
+Pipeline.prototype.returns = function(key){
+  return this.push('return', key);
+}
+
+Pipeline.prototype.select = function(key){
+  return this.push('select', key);
+}
+
 /**
  * Pushes a `"relation"` onto the pipeline.
  *
