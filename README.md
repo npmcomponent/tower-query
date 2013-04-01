@@ -1,27 +1,27 @@
-# Tower Pipeline
+# Tower Topology
 
 ## Installation
 
 node:
 
 ```
-npm install tower-pipeline
+npm install tower-topology
 ```
 
 browser:
 
 ```
-component install tower/pipeline
+component install tower/topology
 ```
 
 ## Example
 
-This is a `tower-pipeline` mixin.
+This is a `tower-topology` mixin.
 
 ``` javascript
-var pipeline = require('tower-pipeline');
+var topology = require('tower-topology');
 
-var pipes = pipeline()
+var pipes = topology()
   .start('users')
   .gte('likeCount', 10)
   .lte('likeCount', 200)

@@ -6,30 +6,30 @@
 var slice = [].slice;
 
 /**
- * Expose `pipeline`.
+ * Expose `topology`.
  */
 
-module.exports = pipeline;
+module.exports = topology;
 
 /**
- * Expose `Pipeline`.
+ * Expose `Topology`.
  */
 
-module.exports.Pipeline = Pipeline;
+module.exports.Topology = Topology;
 
 /**
  * Wrap an array for chaining query criteria.
  */
 
-function pipeline(pipes) {
-  return new Pipeline(pipes);
+function topology(pipes) {
+  return new Topology(pipes);
 }
 
 /**
- * Construct a new `Pipeline` instance.
+ * Construct a new `Topology` instance.
  */
 
-function Pipeline(pipes) {
+function Topology(pipes) {
   this.pipes = pipes || [];
 }
 
@@ -41,11 +41,11 @@ function Pipeline(pipes) {
  * @api public
  */
 
-Pipeline.prototype.start = function(key, val){
+Topology.prototype.start = function(key, val){
   return this.push('start', key);
 }
 
-Pipeline.prototype.where = function(key, val){
+Topology.prototype.where = function(key, val){
   return this.condition('eq', key, val);
 }
 
@@ -56,7 +56,7 @@ Pipeline.prototype.where = function(key, val){
  *
  * Example:
  *
- *    pipeline().start('users')
+ *    topology().start('users')
  *      .incoming('friends')
  *      .incoming('friends');
  *
@@ -64,7 +64,7 @@ Pipeline.prototype.where = function(key, val){
  * @api public
  */
 
-Pipeline.prototype.incoming = function(key){
+Topology.prototype.incoming = function(key){
   return this.relation('incoming', key);
 }
 
@@ -75,7 +75,7 @@ Pipeline.prototype.incoming = function(key){
  *
  * Example:
  *
- *    pipeline().start('users')
+ *    topology().start('users')
  *      .outgoing('friends')
  *      .outgoing('friends');
  *
@@ -83,87 +83,87 @@ Pipeline.prototype.incoming = function(key){
  * @api public
  */
 
-Pipeline.prototype.outgoing = function(key){
+Topology.prototype.outgoing = function(key){
   return this.relation('outgoing', key);
 }
 
 /**
  * What the variable should be called for the data returned.
- * References the previous item in the pipeline.
+ * References the previous item in the topology.
  *
  * Example:
  *
- *    pipeline().start('users').as('people');
+ *    topology().start('users').as('people');
  *
  * @param {String} key
  * @api public
  */
 
-Pipeline.prototype.as = function(key){
+Topology.prototype.as = function(key){
   return this.push('as', key);
 }
 
 /**
- * Append "greater than or equal to" condition to pipeline.
+ * Append "greater than or equal to" condition to topology.
  *
  * Example:
  *
- *    pipeline().start('users').gte('likeCount', 10);
+ *    topology().start('users').gte('likeCount', 10);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
  */
 
-Pipeline.prototype.gte = function(key, val){
+Topology.prototype.gte = function(key, val){
   return this.condition('gte', key, val);
 }
 
 /**
- * Append "greater than" condition to pipeline.
+ * Append "greater than" condition to topology.
  *
  * Example:
  *
- *    pipeline().start('users').gt('likeCount', 10);
+ *    topology().start('users').gt('likeCount', 10);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
  */
 
-Pipeline.prototype.gt = function(key, val){
+Topology.prototype.gt = function(key, val){
   return this.condition('gt', key, val);
 }
 
 /**
- * Append "less than or equal to" condition to pipeline.
+ * Append "less than or equal to" condition to topology.
  *
  * Example:
  *
- *    pipeline().start('users').lte('likeCount', 200);
+ *    topology().start('users').lte('likeCount', 200);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
  */
 
-Pipeline.prototype.lte = function(key, val){
+Topology.prototype.lte = function(key, val){
   return this.condition('lte', key, val);
 }
 
 /**
- * Append "less than" condition to pipeline.
+ * Append "less than" condition to topology.
  *
  * Example:
  *
- *    pipeline().start('users').lt('likeCount', 200);
+ *    topology().start('users').lt('likeCount', 200);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
  */
 
-Pipeline.prototype.lt = function(key, val){
+Topology.prototype.lt = function(key, val){
   return this.condition('lt', key, val);
 }
 
@@ -173,13 +173,13 @@ Pipeline.prototype.lt = function(key, val){
  *
  * Example:
  *
- *    pipeline().start('users')
+ *    topology().start('users')
  *      .insert({ email: 'john.smith@gmail.com' });
  *
  * @api public
  */
 
-Pipeline.prototype.insert = function(data){
+Topology.prototype.insert = function(data){
   return this.action('insert', data);
 }
 
@@ -189,12 +189,12 @@ Pipeline.prototype.insert = function(data){
  *
  * Example:
  *
- *    pipeline().start('users').update({ likeCount: 0 });
+ *    topology().start('users').update({ likeCount: 0 });
  *
  * @api public
  */
 
-Pipeline.prototype.update = function(data){
+Topology.prototype.update = function(data){
   return this.action('update', data);
 }
 
@@ -204,12 +204,12 @@ Pipeline.prototype.update = function(data){
  *
  * Example:
  *
- *    pipeline().start('users').remove();
+ *    topology().start('users').remove();
  *
  * @api public
  */
 
-Pipeline.prototype.remove = function(data){
+Topology.prototype.remove = function(data){
   return this.action('remove', data);
 }
 
@@ -218,12 +218,12 @@ Pipeline.prototype.remove = function(data){
  *
  * Example:
  *
- *    pipeline().start('users').query(fn);
+ *    topology().start('users').query(fn);
  *
  * @api public
  */
 
-Pipeline.prototype.query = function(fn){
+Topology.prototype.query = function(fn){
   return this.action('query', fn);
 }
 
@@ -235,12 +235,12 @@ Pipeline.prototype.query = function(fn){
  *
  * Example:
  *
- *    pipeline().start('users').pipe(req);
+ *    topology().start('users').pipe(req);
  *
  * @api public
  */
 
-Pipeline.prototype.pipe = function(fn){
+Topology.prototype.pipe = function(fn){
   return this.action('pipe', fn);
 }
 
@@ -249,12 +249,12 @@ Pipeline.prototype.pipe = function(fn){
  *
  * Example:
  *
- *    pipeline().start('users').count(fn);
+ *    topology().start('users').count(fn);
  *
  * @api public
  */
 
-Pipeline.prototype.count = function(fn){
+Topology.prototype.count = function(fn){
   return this.action('count', fn);
 }
 
@@ -263,12 +263,12 @@ Pipeline.prototype.count = function(fn){
  *
  * Example:
  *
- *    pipeline().start('users').exists(fn);
+ *    topology().start('users').exists(fn);
  *
  * @api public
  */
 
-Pipeline.prototype.exists = function(fn){
+Topology.prototype.exists = function(fn){
   return this.action('exists', fn);
 }
 
@@ -277,17 +277,17 @@ Pipeline.prototype.exists = function(fn){
  *
  * If the key is a property name, it will
  * be combined with the table/collection name
- * defined somewhere earlier in the pipeline.
+ * defined somewhere earlier in the topology.
  *
  * Example:
  *
- *    pipeline().start('users').asc('createdAt');
+ *    topology().start('users').asc('createdAt');
  *
  * @param {String} key
  * @api public
  */
 
-Pipeline.prototype.asc = function(key){
+Topology.prototype.asc = function(key){
   return this.order(1, key);
 }
 
@@ -296,42 +296,42 @@ Pipeline.prototype.asc = function(key){
  *
  * If the key is a property name, it will
  * be combined with the table/collection name
- * defined somewhere earlier in the pipeline.
+ * defined somewhere earlier in the topology.
  *
  * Example:
  *
- *    pipeline().start('users').desc('createdAt');
+ *    topology().start('users').desc('createdAt');
  *
  * @param {String} key
  * @api public
  */
 
-Pipeline.prototype.desc = function(key){
+Topology.prototype.desc = function(key){
   return this.order(-1, key);
 }
 
-Pipeline.prototype.returns = function(key){
+Topology.prototype.returns = function(key){
   return this.push('return', key);
 }
 
-Pipeline.prototype.select = function(key){
+Topology.prototype.select = function(key){
   return this.push('select', key);
 }
 
 /**
- * Pushes a `"relation"` onto the pipeline.
+ * Pushes a `"relation"` onto the topology.
  *
  * @param {String} type
  * @param {String} key
  * @api private
  */
 
-Pipeline.prototype.relation = function(type, key){
+Topology.prototype.relation = function(type, key){
   return this.push('relation', type, key);
 }
 
 /**
- * Pushes a `"condition"` onto the pipeline.
+ * Pushes a `"condition"` onto the topology.
  *
  * @param {String} op Operator string
  * @param {String} key
@@ -339,55 +339,55 @@ Pipeline.prototype.relation = function(type, key){
  * @api private
  */
 
-Pipeline.prototype.condition = function(op, key, val){
+Topology.prototype.condition = function(op, key, val){
   return this.push('condition', op, key, val);
 }
 
 /**
- * Pushes an `"action"` onto the pipeline.
+ * Pushes an `"action"` onto the topology.
  *
  * Example:
  *
- *    pipeline().action('insert', {message: 'Test'});
- *    pipeline().action('insert', [{message: 'one.'}, {message: 'two.'}]);
+ *    topology().action('insert', {message: 'Test'});
+ *    topology().action('insert', [{message: 'one.'}, {message: 'two.'}]);
  *
  * @param {String} type
  * @param {Object|Array} data The data to act on.
  * @api private
  */
 
-Pipeline.prototype.action = function(type, data){
+Topology.prototype.action = function(type, data){
   return this.push('action', type, data);
 }
 
 /**
- * Pushes a sort direction onto the pipeline.
+ * Pushes a sort direction onto the topology.
 
  * @param {Integer} dir   Direction it should point (-1, 1, 0).
  * @param {String}  key   The property to sort on.
  * @api private
  */
 
-Pipeline.prototype.order = function(dir, key){
+Topology.prototype.order = function(dir, key){
   return this.push('order', dir, key);
 }
 
 /**
- * Push criterion onto pipeline.
+ * Push criterion onto topology.
  * 
  * @api private
  */
 
-Pipeline.prototype.push = function(){
+Topology.prototype.push = function(){
   this.pipes.push(slice.call(arguments));
   return this;
 }
 
 /**
- * Get the number of pipes in the pipeline.
+ * Get the number of pipes in the topology.
  */
 
-Pipeline.prototype.size = function(){
+Topology.prototype.size = function(){
   return this.pipes.length;
 }
 
@@ -395,7 +395,7 @@ Pipeline.prototype.size = function(){
  * Reset all pipes.
  */
 
-Pipeline.prototype.reset = function(){
+Topology.prototype.reset = function(){
   this.pipes = [];
   return this;
 }

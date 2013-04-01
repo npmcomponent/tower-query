@@ -1,5 +1,5 @@
 {
-  "name": "tower-pipeline",
+  "name": "tower-topology",
   "version": "0.0.1",
   "main": "./index.js"
 }

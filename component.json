@@ -1,7 +1,7 @@
 {
-  "name": "pipeline",
-  "repo": "tower/pipeline",
-  "description": "Tower Pipeline component",
+  "name": "topology",
+  "repo": "tower/topology",
+  "description": "Tower topology component",
   "version": "0.0.1",
   "keywords": [
     "pipes",
