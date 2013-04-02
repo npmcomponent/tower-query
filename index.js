@@ -103,6 +103,10 @@ Topology.prototype.as = function(key){
   return this.push('as', key);
 }
 
+Topology.prototype.eq = function(key){
+  return this.push('eq', key);
+}
+
 /**
  * Append "greater than or equal to" condition to topology.
  *
