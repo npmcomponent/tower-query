@@ -1,9 +1,9 @@
-var topology = require('..')
+var query = require('..')
   , assert = require('assert');
 
-describe('topology', function() {
+describe('query', function() {
   it('should chain', function() {
-    var pipes = topology()
+    var pipes = query()
       .start('users')
       .gte('likeCount', 10)
       .lte('likeCount', 200)

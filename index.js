@@ -6,31 +6,31 @@
 var slice = [].slice;
 
 /**
- * Expose `topology`.
+ * Expose `query`.
  */
 
-module.exports = topology;
+module.exports = query;
 
 /**
- * Expose `Topology`.
+ * Expose `Query`.
  */
 
-module.exports.Topology = Topology;
+module.exports.Query = Query;
 
 /**
  * Wrap an array for chaining query criteria.
  */
 
-function topology(pipes) {
-  return new Topology(pipes);
+function query(criteria) {
+  return new Query(criteria);
 }
 
 /**
- * Construct a new `Topology` instance.
+ * Construct a new `Query` instance.
  */
 
-function Topology(pipes) {
-  this.pipes = pipes || [];
+function Query(criteria) {
+  this.criteria = criteria || [];
 }
 
 /**
@@ -41,11 +41,11 @@ function Topology(pipes) {
  * @api public
  */
 
-Topology.prototype.start = function(key, val){
+Query.prototype.start = function(key, val){
   return this.push('start', key);
 }
 
-Topology.prototype.where = function(key, val){
+Query.prototype.where = function(key, val){
   return this.condition('eq', key, val);
 }
 
@@ -56,7 +56,7 @@ Topology.prototype.where = function(key, val){
  *
  * Example:
  *
- *    topology().start('users')
+ *    query().start('users')
  *      .incoming('friends')
  *      .incoming('friends');
  *
@@ -64,7 +64,7 @@ Topology.prototype.where = function(key, val){
  * @api public
  */
 
-Topology.prototype.incoming = function(key){
+Query.prototype.incoming = function(key){
   return this.relation('incoming', key);
 }
 
@@ -75,7 +75,7 @@ Topology.prototype.incoming = function(key){
  *
  * Example:
  *
- *    topology().start('users')
+ *    query().start('users')
  *      .outgoing('friends')
  *      .outgoing('friends');
  *
@@ -83,91 +83,91 @@ Topology.prototype.incoming = function(key){
  * @api public
  */
 
-Topology.prototype.outgoing = function(key){
+Query.prototype.outgoing = function(key){
   return this.relation('outgoing', key);
 }
 
 /**
  * What the variable should be called for the data returned.
- * References the previous item in the topology.
+ * References the previous item in the query.
  *
  * Example:
  *
- *    topology().start('users').as('people');
+ *    query().start('users').as('people');
  *
  * @param {String} key
  * @api public
  */
 
-Topology.prototype.as = function(key){
+Query.prototype.as = function(key){
   return this.push('as', key);
 }
 
-Topology.prototype.eq = function(key){
+Query.prototype.eq = function(key){
   return this.push('eq', key);
 }
 
 /**
- * Append "greater than or equal to" condition to topology.
+ * Append "greater than or equal to" condition to query.
  *
  * Example:
  *
- *    topology().start('users').gte('likeCount', 10);
+ *    query().start('users').gte('likeCount', 10);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
  */
 
-Topology.prototype.gte = function(key, val){
+Query.prototype.gte = function(key, val){
   return this.condition('gte', key, val);
 }
 
 /**
- * Append "greater than" condition to topology.
+ * Append "greater than" condition to query.
  *
  * Example:
  *
- *    topology().start('users').gt('likeCount', 10);
+ *    query().start('users').gt('likeCount', 10);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
  */
 
-Topology.prototype.gt = function(key, val){
+Query.prototype.gt = function(key, val){
   return this.condition('gt', key, val);
 }
 
 /**
- * Append "less than or equal to" condition to topology.
+ * Append "less than or equal to" condition to query.
  *
  * Example:
  *
- *    topology().start('users').lte('likeCount', 200);
+ *    query().start('users').lte('likeCount', 200);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
  */
 
-Topology.prototype.lte = function(key, val){
+Query.prototype.lte = function(key, val){
   return this.condition('lte', key, val);
 }
 
 /**
- * Append "less than" condition to topology.
+ * Append "less than" condition to query.
  *
  * Example:
  *
- *    topology().start('users').lt('likeCount', 200);
+ *    query().start('users').lt('likeCount', 200);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
  */
 
-Topology.prototype.lt = function(key, val){
+Query.prototype.lt = function(key, val){
   return this.condition('lt', key, val);
 }
 
@@ -177,13 +177,13 @@ Topology.prototype.lt = function(key, val){
  *
  * Example:
  *
- *    topology().start('users')
+ *    query().start('users')
  *      .insert({ email: 'john.smith@gmail.com' });
  *
  * @api public
  */
 
-Topology.prototype.insert = function(data){
+Query.prototype.insert = function(data){
   return this.action('insert', data);
 }
 
@@ -193,12 +193,12 @@ Topology.prototype.insert = function(data){
  *
  * Example:
  *
- *    topology().start('users').update({ likeCount: 0 });
+ *    query().start('users').update({ likeCount: 0 });
  *
  * @api public
  */
 
-Topology.prototype.update = function(data){
+Query.prototype.update = function(data){
   return this.action('update', data);
 }
 
@@ -208,12 +208,12 @@ Topology.prototype.update = function(data){
  *
  * Example:
  *
- *    topology().start('users').remove();
+ *    query().start('users').remove();
  *
  * @api public
  */
 
-Topology.prototype.remove = function(data){
+Query.prototype.remove = function(data){
   return this.action('remove', data);
 }
 
@@ -222,12 +222,12 @@ Topology.prototype.remove = function(data){
  *
  * Example:
  *
- *    topology().start('users').query(fn);
+ *    query().start('users').query(fn);
  *
  * @api public
  */
 
-Topology.prototype.query = function(fn){
+Query.prototype.query = function(fn){
   return this.action('query', fn);
 }
 
@@ -239,12 +239,12 @@ Topology.prototype.query = function(fn){
  *
  * Example:
  *
- *    topology().start('users').pipe(req);
+ *    query().start('users').pipe(req);
  *
  * @api public
  */
 
-Topology.prototype.pipe = function(fn){
+Query.prototype.pipe = function(fn){
   return this.action('pipe', fn);
 }
 
@@ -253,12 +253,12 @@ Topology.prototype.pipe = function(fn){
  *
  * Example:
  *
- *    topology().start('users').count(fn);
+ *    query().start('users').count(fn);
  *
  * @api public
  */
 
-Topology.prototype.count = function(fn){
+Query.prototype.count = function(fn){
   return this.action('count', fn);
 }
 
@@ -267,12 +267,12 @@ Topology.prototype.count = function(fn){
  *
  * Example:
  *
- *    topology().start('users').exists(fn);
+ *    query().start('users').exists(fn);
  *
  * @api public
  */
 
-Topology.prototype.exists = function(fn){
+Query.prototype.exists = function(fn){
   return this.action('exists', fn);
 }
 
@@ -281,17 +281,17 @@ Topology.prototype.exists = function(fn){
  *
  * If the key is a property name, it will
  * be combined with the table/collection name
- * defined somewhere earlier in the topology.
+ * defined somewhere earlier in the query.
  *
  * Example:
  *
- *    topology().start('users').asc('createdAt');
+ *    query().start('users').asc('createdAt');
  *
  * @param {String} key
  * @api public
  */
 
-Topology.prototype.asc = function(key){
+Query.prototype.asc = function(key){
   return this.order(1, key);
 }
 
@@ -300,42 +300,42 @@ Topology.prototype.asc = function(key){
  *
  * If the key is a property name, it will
  * be combined with the table/collection name
- * defined somewhere earlier in the topology.
+ * defined somewhere earlier in the query.
  *
  * Example:
  *
- *    topology().start('users').desc('createdAt');
+ *    query().start('users').desc('createdAt');
  *
  * @param {String} key
  * @api public
  */
 
-Topology.prototype.desc = function(key){
+Query.prototype.desc = function(key){
   return this.order(-1, key);
 }
 
-Topology.prototype.returns = function(key){
+Query.prototype.returns = function(key){
   return this.push('return', key);
 }
 
-Topology.prototype.select = function(key){
+Query.prototype.select = function(key){
   return this.push('select', key);
 }
 
 /**
- * Pushes a `"relation"` onto the topology.
+ * Pushes a `"relation"` onto the query.
  *
  * @param {String} type
  * @param {String} key
  * @api private
  */
 
-Topology.prototype.relation = function(type, key){
+Query.prototype.relation = function(type, key){
   return this.push('relation', type, key);
 }
 
 /**
- * Pushes a `"condition"` onto the topology.
+ * Pushes a `"condition"` onto the query.
  *
  * @param {String} op Operator string
  * @param {String} key
@@ -343,63 +343,63 @@ Topology.prototype.relation = function(type, key){
  * @api private
  */
 
-Topology.prototype.condition = function(op, key, val){
+Query.prototype.condition = function(op, key, val){
   return this.push('condition', op, key, val);
 }
 
 /**
- * Pushes an `"action"` onto the topology.
+ * Pushes an `"action"` onto the query.
  *
  * Example:
  *
- *    topology().action('insert', {message: 'Test'});
- *    topology().action('insert', [{message: 'one.'}, {message: 'two.'}]);
+ *    query().action('insert', {message: 'Test'});
+ *    query().action('insert', [{message: 'one.'}, {message: 'two.'}]);
  *
  * @param {String} type
  * @param {Object|Array} data The data to act on.
  * @api private
  */
 
-Topology.prototype.action = function(type, data){
+Query.prototype.action = function(type, data){
   return this.push('action', type, data);
 }
 
 /**
- * Pushes a sort direction onto the topology.
+ * Pushes a sort direction onto the query.
 
  * @param {Integer} dir   Direction it should point (-1, 1, 0).
  * @param {String}  key   The property to sort on.
  * @api private
  */
 
-Topology.prototype.order = function(dir, key){
+Query.prototype.order = function(dir, key){
   return this.push('order', dir, key);
 }
 
 /**
- * Push criterion onto topology.
+ * Push criterion onto query.
  * 
  * @api private
  */
 
-Topology.prototype.push = function(){
-  this.pipes.push(slice.call(arguments));
+Query.prototype.push = function(){
+  this.criteria.push(slice.call(arguments));
   return this;
 }
 
 /**
- * Get the number of pipes in the topology.
+ * Get the number of criteria in the query.
  */
 
-Topology.prototype.size = function(){
-  return this.pipes.length;
+Query.prototype.size = function(){
+  return this.criteria.length;
 }
 
 /**
- * Reset all pipes.
+ * Reset all criteria.
  */
 
-Topology.prototype.reset = function(){
-  this.pipes = [];
+Query.prototype.reset = function(){
+  this.criteria = [];
   return this;
 }

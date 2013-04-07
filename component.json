@@ -1,7 +1,7 @@
 {
-  "name": "topology",
-  "repo": "tower/topology",
-  "description": "Tower topology component",
+  "name": "query",
+  "repo": "tower/query",
+  "description": "Tower query component",
   "version": "0.0.1",
   "keywords": [
     "pipes",
