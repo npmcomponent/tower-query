@@ -42,7 +42,7 @@ describe('query', function(){
       // twitter.user -> reduced(user)
       .where('user.firstName', 'twitter.user.firstName')
       .returns('user')
-      .compile();
+      .topology();
 
     // 6: [user, facebook.user, twitter.user, constraints(user), constriants(facebook.user)]
     // assert(6 === topology.size())
@@ -71,7 +71,7 @@ describe('query', function(){
     //var topology = query()
     //  .start('user')
     //  .incoming('facebook.user')
-    //  .compile();
+    //  .topology();
   });
 
   it('should compile criteria to a topology', function(done){
@@ -118,7 +118,7 @@ describe('query', function(){
       .start('users')
       .gte('likeCount', 10)
       .lt('likeCount', 20)
-      .compile();
+      .topology();
 
     var result;
 

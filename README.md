@@ -19,19 +19,18 @@ component install tower/query
 ```js
 var query = require('tower-query');
 
-var criteria = query()
+var usersQuery = query()
   .start('users')
   .where('likeCount').gte(10)
-  .where('likeCount').lte(200)
-  .criteria;
+  .where('likeCount').lte(200);
 
-var expected = [
+assert.deepEqual([
     ['start', 'users']
   , ['constraint', 'likeCount', 'gte', 10]
   , ['constraint', 'likeCount', 'lte', 200]
-];
+], usersQuery.criteria);
 
-assert.deepEqual(expected, criteria);
+console.log(query.topology());
 ```
 
 ## Notes

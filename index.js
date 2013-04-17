@@ -421,7 +421,7 @@ Query.prototype.reset = function(){
  * @see http://stackoverflow.com/questions/261573/best-algorithm-for-detecting-cycles-in-a-directed-graph
  */
 
-Query.prototype.compile = function(){
+Query.prototype.topology = function(){
   var topology = new Topology
     , criteria = this.criteria
     , name;
