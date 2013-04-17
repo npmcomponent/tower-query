@@ -414,6 +414,11 @@ Query.prototype.reset = function(){
 
 /**
  * Compile query to a `Topology`.
+ *
+ * Builds an acyclic dependency graph.
+ *
+ * Make sure the graph is **acyclic** (no directed cycles)!
+ * @see http://stackoverflow.com/questions/261573/best-algorithm-for-detecting-cycles-in-a-directed-graph
  */
 
 Query.prototype.compile = function(){

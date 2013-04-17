@@ -21,6 +21,7 @@ describe('query', function(){
 
   it('should find minimum-cost maximum-flow', function(){
     var topology = query()
+      // mapped(user) -> reduced(user)
       .select('user')
       .select('facebook.user')
       .select('twitter.user')
@@ -28,19 +29,18 @@ describe('query', function(){
       .gte('user.likeCount', 10)
       .gte('facebook.likeCount', 20)
       // constraints between models
-      // user -> facebook.user
+      // mapped(facebook.user) -> reduced(facebook.user)
+      // reduced(facebook.user) -> reduced(user)
       // fetch facebook.user first, and use those records against `user`.
       .where('user.email', 'facebook.user.email')
-      // facebook.user -> twitter.user
+      // twitter.user -> reduced(facebook.user)
       .where('facebook.user.username', 'twitter.user.username')
-      // twitter.user -> user
-      // NO, GRAPH MUST BE ACYCLIC!
-      // http://en.wikipedia.org/wiki/Directed_acyclic_graph
-      .where('twitter.user.firstName', 'user.firstName')
+      // twitter.user -> reduced(user)
+      .where('user.firstName', 'twitter.user.firstName')
       .returns('user')
       .compile();
 
-    // 6: [user, facebook.user, twitter.user, user->facebook, facebook->twitter, twitter->user]
+    // 6: [user, facebook.user, twitter.user, constraints(user), constriants(facebook.user)]
     // assert(6 === topology.size())
 
     // only query `users` who have a `facebook.user.email`
@@ -58,6 +58,9 @@ describe('query', function(){
     // it'd have to make to get the result.
 
     // I am pretty sure this is a "circulation" problem, not 100% though.
+    // http://en.wikipedia.org/wiki/Directed_acyclic_graph
+
+    // build a dependency graph, must be acyclic
   });
 
   it('should compile criteria to a topology', function(done){
