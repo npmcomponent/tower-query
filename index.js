@@ -417,6 +417,6 @@ Query.prototype.reset = function(){
 
 Query.prototype.compile = function(){
   var topology = new Topology;
-  
+  topology.stream('users.find', { conditions: this.criteria.slice(1) });
   return topology;
 }
