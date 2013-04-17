@@ -49,7 +49,7 @@ Query.prototype.start = function(key, val){
 }
 
 Query.prototype.where = function(key, val){
-  return this.condition('eq', key, val);
+  return this.constraint('eq', key, val);
 }
 
 /**
@@ -111,7 +111,7 @@ Query.prototype.eq = function(key){
 }
 
 /**
- * Append "greater than or equal to" condition to query.
+ * Append "greater than or equal to" constraint to query.
  *
  * Example:
  *
@@ -123,11 +123,11 @@ Query.prototype.eq = function(key){
  */
 
 Query.prototype.gte = function(key, val){
-  return this.condition('gte', key, val);
+  return this.constraint('gte', key, val);
 }
 
 /**
- * Append "greater than" condition to query.
+ * Append "greater than" constraint to query.
  *
  * Example:
  *
@@ -139,11 +139,11 @@ Query.prototype.gte = function(key, val){
  */
 
 Query.prototype.gt = function(key, val){
-  return this.condition('gt', key, val);
+  return this.constraint('gt', key, val);
 }
 
 /**
- * Append "less than or equal to" condition to query.
+ * Append "less than or equal to" constraint to query.
  *
  * Example:
  *
@@ -155,11 +155,11 @@ Query.prototype.gt = function(key, val){
  */
 
 Query.prototype.lte = function(key, val){
-  return this.condition('lte', key, val);
+  return this.constraint('lte', key, val);
 }
 
 /**
- * Append "less than" condition to query.
+ * Append "less than" constraint to query.
  *
  * Example:
  *
@@ -171,7 +171,7 @@ Query.prototype.lte = function(key, val){
  */
 
 Query.prototype.lt = function(key, val){
-  return this.condition('lt', key, val);
+  return this.constraint('lt', key, val);
 }
 
 Query.prototype.find = function(fn){
@@ -342,7 +342,7 @@ Query.prototype.relation = function(type, key){
 }
 
 /**
- * Pushes a `"condition"` onto the query.
+ * Pushes a `"constraint"` onto the query.
  *
  * @param {String} op Operator string
  * @param {String} key
@@ -350,8 +350,8 @@ Query.prototype.relation = function(type, key){
  * @api private
  */
 
-Query.prototype.condition = function(op, key, val){
-  return this.push('condition', op, key, val);
+Query.prototype.constraint = function(op, key, val){
+  return this.push('constraint', key, op, val);
 }
 
 /**
@@ -429,10 +429,10 @@ Query.prototype.compile = function(){
     switch (criterion[0]) {
       case 'select':
       case 'start':
-        topology.stream(name = criterion[1] + '.find', { conditions: [] });
+        topology.stream(name = criterion[1] + '.find', { constraints: [] });
         break;
-      case 'condition':
-        topology.streams[name].conditions.push(criterion);
+      case 'constraint':
+        topology.streams[name].constraints.push(criterion);
         break;
     }
   }

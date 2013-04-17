@@ -12,8 +12,8 @@ describe('query', function(){
 
     var expected = [
         ['start', 'users']
-      , ['condition', 'gte', 'likeCount', 10]
-      , ['condition', 'lte', 'likeCount', 200]
+      , ['constraint', 'likeCount', 'gte', 10]
+      , ['constraint', 'likeCount', 'lte', 200]
     ];
 
     assert.deepEqual(expected, criteria);
@@ -34,15 +34,15 @@ describe('query', function(){
         users.forEach(function(user){
           var success = true;
 
-          context.conditions.forEach(function(condition){
+          context.constraints.forEach(function(constraint){
             // XXX: operators
             if (success) {
-              switch (condition[1]) {
+              switch (constraint[2]) {
                 case 'gte':
-                  success = user[condition[2]] >= condition[3];
+                  success = user[constraint[1]] >= constraint[3];
                   break;
                 case 'lt':
-                  success = user[condition[2]] < condition[3];
+                  success = user[constraint[1]] < constraint[3];
                   break;
               }
             }
