@@ -416,7 +416,23 @@ Query.prototype.reset = function(){
  */
 
 Query.prototype.compile = function(){
-  var topology = new Topology;
-  topology.stream('users.find', { conditions: this.criteria.slice(1) });
+  var topology = new Topology
+    , criteria = this.criteria
+    , name;
+
+  // XXX: this function should just split the criteria by model/adapter.
+  // then the adapter
+  for (var i = 0, n = criteria.length; i < n; i++) {
+    var criterion = criteria[i];
+    switch (criterion[0]) {
+      case 'select':
+      case 'start':
+        topology.stream(name = criterion[1] + '.find', { conditions: [] });
+      case 'condition':
+        topology.streams[name].conditions.push(criterion);
+        break;
+    }
+  }
+
   return topology;
 }
