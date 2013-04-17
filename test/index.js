@@ -34,6 +34,8 @@ describe('query', function(){
       // facebook.user -> twitter.user
       .where('facebook.user.username', 'twitter.user.username')
       // twitter.user -> user
+      // NO, GRAPH MUST BE ACYCLIC!
+      // http://en.wikipedia.org/wiki/Directed_acyclic_graph
       .where('twitter.user.firstName', 'user.firstName')
       .returns('user')
       .compile();
