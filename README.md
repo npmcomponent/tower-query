@@ -21,8 +21,8 @@ var query = require('tower-query');
 
 var criteria = query()
   .start('users')
-  .gte('likeCount', 10)
-  .lte('likeCount', 200)
+  .where('likeCount').gte(10)
+  .where('likeCount').lte(200)
   .criteria;
 
 var expected = [
