@@ -3,19 +3,22 @@
  * Module dependencies.
  */
 
-var slice = [].slice;
+// maybe this query module only builds a dsl,
+// and the compiling happens in tower-graph?
+var Topology = require('tower-topology').Topology
+  , slice = [].slice;
 
 /**
  * Expose `query`.
  */
 
-module.exports = query;
+var exports = module.exports = query;
 
 /**
  * Expose `Query`.
  */
 
-module.exports.Query = Query;
+exports.Query = Query;
 
 /**
  * Wrap an array for chaining query criteria.
@@ -169,6 +172,10 @@ Query.prototype.lte = function(key, val){
 
 Query.prototype.lt = function(key, val){
   return this.condition('lt', key, val);
+}
+
+Query.prototype.find = function(fn){
+  return this.action('find', fn);
 }
 
 /**
@@ -402,4 +409,14 @@ Query.prototype.size = function(){
 Query.prototype.reset = function(){
   this.criteria = [];
   return this;
+}
+
+/**
+ * Compile query to a `Topology`.
+ */
+
+Query.prototype.compile = function(){
+  var topology = new Topology;
+  
+  return topology;
 }
