@@ -420,6 +420,8 @@ Query.prototype.compile = function(){
     , criteria = this.criteria
     , name;
 
+  if (this._explain) this._explain(criteria);
+
   // XXX: this function should just split the criteria by model/adapter.
   // then the adapter
   for (var i = 0, n = criteria.length; i < n; i++) {
@@ -428,6 +430,7 @@ Query.prototype.compile = function(){
       case 'select':
       case 'start':
         topology.stream(name = criterion[1] + '.find', { conditions: [] });
+        break;
       case 'condition':
         topology.streams[name].conditions.push(criterion);
         break;
@@ -435,4 +438,14 @@ Query.prototype.compile = function(){
   }
 
   return topology;
+}
+
+/**
+ * A way to log the query criteria,
+ * so you can see if the adapter supports it.
+ */
+
+Query.prototype.explain = function(fn){
+  this._explain = fn;
+  return this;
 }
