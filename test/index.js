@@ -19,6 +19,35 @@ describe('query', function(){
     assert.deepEqual(expected, criteria);
   });
 
+  it('should create new stream for "join" constraints', function(){
+    var topology = query()
+      .select('user')
+      .select('facebook.user')
+      .select('twitter.user')
+      // random constraints purely on the models
+      .gte('user.likeCount', 10)
+      .gte('facebook.likeCount', 20)
+      // constraints between models
+      // user -> facebook.user
+      // fetch facebook.user first, and use those records against `user`.
+      .where('user.email', 'facebook.user.email')
+      // facebook.user -> twitter.user
+      .where('facebook.user.username', 'twitter.user.username')
+      // twitter.user -> user
+      .where('twitter.user.firstName', 'user.firstName')
+      .returns('user')
+      .compile();
+
+    // 6: [user, facebook.user, twitter.user, user->facebook, facebook->twitter, twitter->user]
+    // assert(6 === topology.size())
+
+    // only query `users` who have a `facebook.user.email`
+
+    // only query `twitter.user` who's firstName is the same as a `user`
+    // same as the reverse.
+    // only query `user` who's firstName is the same as a `twitter.user`
+  });
+
   it('should compile criteria to a topology', function(done){
     var users = [
         { name: 'first', likeCount: 20 }

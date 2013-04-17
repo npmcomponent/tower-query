@@ -49,6 +49,7 @@ Query.prototype.start = function(key, val){
 }
 
 Query.prototype.where = function(key, val){
+  // this._key = key;
   return this.constraint('eq', key, val);
 }
 
