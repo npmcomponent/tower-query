@@ -29,6 +29,10 @@ describe('query', function(){
       .gte('user.likeCount', 10)
       .gte('facebook.likeCount', 20)
       // constraints between models
+      // .on('exec', function(context) { context.tests[user.id] = context.constraints.length })
+      // if (context.tests[user.id] === 0)
+      //    it passed all the constraints! it's been reduced!
+      //
       // mapped(facebook.user) -> reduced(facebook.user)
       // reduced(facebook.user) -> reduced(user)
       // fetch facebook.user first, and use those records against `user`.
