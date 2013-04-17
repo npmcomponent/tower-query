@@ -1,39 +1,37 @@
-# Tower Topology
+# Tower Query API
 
 ## Installation
 
 node:
 
 ```
-npm install tower-topology
+npm install tower-query
 ```
 
 browser:
 
 ```
-component install tower/topology
+component install tower/query
 ```
 
 ## Example
 
-This is a `tower-topology` mixin.
+```js
+var query = require('tower-query');
 
-``` javascript
-var topology = require('tower-topology');
-
-var pipes = topology()
+var criteria = query()
   .start('users')
   .gte('likeCount', 10)
   .lte('likeCount', 200)
-  .pipes;
+  .criteria;
 
 var expected = [
     ['start', 'users']
-  , ['condition', 'gte', 'likeCount', 10]
-  , ['condition', 'lte', 'likeCount', 200]
+  , ['constraint', 'likeCount', 'gte', 10]
+  , ['constraint', 'likeCount', 'lte', 200]
 ];
 
-assert.deepEqual(expected, pipes);
+assert.deepEqual(expected, criteria);
 ```
 
 ## Notes

@@ -67,6 +67,13 @@ describe('query', function(){
     // build a dependency graph, must be acyclic
   });
 
+  it('should find minimum-cost maximum-flow in an easier way (graph api)', function(){
+    //var topology = query()
+    //  .start('user')
+    //  .incoming('facebook.user')
+    //  .compile();
+  });
+
   it('should compile criteria to a topology', function(done){
     var users = [
         { name: 'first', likeCount: 20 }
