@@ -19,7 +19,7 @@ describe('query', function(){
     assert.deepEqual(expected, criteria);
   });
 
-  it('should create new stream for "join" constraints', function(){
+  it('should find minimum-cost maximum-flow', function(){
     var topology = query()
       .select('user')
       .select('facebook.user')
