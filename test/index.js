@@ -54,6 +54,8 @@ describe('query', function(){
     // there is then a cost associated with doing one first over the other,
     // based on our knowledge of how many http requests vs. db requests
     // it'd have to make to get the result.
+
+    // I am pretty sure this is a "circulation" problem, not 100% though.
   });
 
   it('should compile criteria to a topology', function(done){
