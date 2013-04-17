@@ -46,6 +46,14 @@ describe('query', function(){
     // only query `twitter.user` who's firstName is the same as a `user`
     // same as the reverse.
     // only query `user` who's firstName is the same as a `twitter.user`
+
+    // labelled edges would allow same "edge" between node
+    // to be evaluated separately (multigraph?).
+    // twitter -> user == "twitter-first"
+    // user -> twitter == "user-first"
+    // there is then a cost associated with doing one first over the other,
+    // based on our knowledge of how many http requests vs. db requests
+    // it'd have to make to get the result.
   });
 
   it('should compile criteria to a topology', function(done){
