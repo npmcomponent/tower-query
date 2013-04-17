@@ -30,7 +30,7 @@ assert.deepEqual([
   , ['constraint', 'likeCount', 'lte', 200]
 ], usersQuery.criteria);
 
-console.log(query.topology());
+console.log(usersQuery.topology());
 ```
 
 ## Notes
