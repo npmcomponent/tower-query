@@ -6,6 +6,7 @@
 // maybe this query module only builds a dsl,
 // and the compiling happens in tower-graph?
 var Topology = require('tower-topology').Topology
+  , adapter = require('tower-adapter')
   , slice = [].slice;
 
 /**
@@ -409,6 +410,23 @@ Query.prototype.size = function(){
 
 Query.prototype.reset = function(){
   this.criteria = [];
+  return this;
+}
+
+/**
+ * XXX: For now, only one query per adapter.
+ *      Later, you can query across multiple adapters
+ */
+
+Query.prototype.execute = function(fn){
+  // XXX: only support one adapter for now.
+  if (!this._adapter) throw new Error('Must `use` an adapter');
+  // adapter.execute returns a `Topology` instance.
+  return adapter(this._adapter).execute(this.criteria, fn);
+}
+
+Query.prototype.use = function(name){
+  this._adapter = name;
   return this;
 }
 

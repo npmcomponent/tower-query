@@ -4,6 +4,7 @@
   "main": "./index.js",
   "dependencies": {
     "tower-topology": "*",
-    "tower-stream": "*"
+    "tower-stream": "*",
+    "tower-adapter": "*"
   }
 }

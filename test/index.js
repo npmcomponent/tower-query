@@ -1,5 +1,6 @@
 var query = require('..')
   , stream = require('tower-stream')
+  , adapter = require('tower-adapter')
   , assert = require('assert');
 
 describe('query', function(){
@@ -72,6 +73,26 @@ describe('query', function(){
     //  .start('user')
     //  .incoming('facebook.user')
     //  .topology();
+  });
+
+  it('should execute adapter', function(done){
+    adapter('example')
+      .model('user');
+
+    adapter('example')
+      .action('user.find');
+
+    adapter('example').execute = function(criteria, fn){
+      assert(1 === criteria.length);
+      fn();
+    }
+
+    var topology = query()
+      .use('example')
+      .select('user')
+      .execute(function(){
+        done();
+      });
   });
 
   it('should compile criteria to a topology', function(done){
