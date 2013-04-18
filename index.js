@@ -440,11 +440,31 @@ Query.prototype.use = function(name){
  */
 
 Query.prototype.topology = function(){
+  return queryToTopology(this);
+};
+
+/**
+ * A way to log the query criteria,
+ * so you can see if the adapter supports it.
+ */
+
+Query.prototype.explain = function(fn){
+  this._explain = fn;
+  return this;
+}
+
+/**
+ * Maybe make this a separate module, `tower-query-to-topology`.
+ */
+
+function queryToTopology(q) {
   var topology = new Topology
-    , criteria = this.criteria
+    , criteria = q.criteria
     , name;
 
-  if (this._explain) this._explain(criteria);
+  if (q._explain) q._explain(criteria);
+
+  var adapters = {};
 
   // XXX: this function should just split the criteria by model/adapter.
   // then the adapter
@@ -453,6 +473,9 @@ Query.prototype.topology = function(){
     switch (criterion[0]) {
       case 'select':
       case 'start':
+        // XXX: since this is just going to support one adapter at a time for now,
+        // need to pass criteria off to it.
+        var adapterName = adapterFor(criterion[1]);
         topology.stream(name = criterion[1] + '.find', { constraints: [] });
         break;
       case 'constraint':
@@ -465,11 +488,37 @@ Query.prototype.topology = function(){
 }
 
 /**
- * A way to log the query criteria,
- * so you can see if the adapter supports it.
+ * user
+ * facebook.user
+ * twitter.user
+ * users
  */
 
-Query.prototype.explain = function(fn){
-  this._explain = fn;
-  return this;
+function adapterFor(path) {
+  if (adapter.map[path]) return adapter(adapter.map[path]);
+
+  // need to get plural/singular map of model (user/users)
+  var parts = path.split('.');
+  // 3 === [adapter, model, attr|relation]
+  // 2 === [adapter, model]
+  // 2 === [model, attr]
+  // 1 === [model]
+  // 1 === [attr]
+
+  var adapters = adapter.instances;
+
+  for (var adapterName in adapters) {
+    var models = adapters[adapterName].resources;
+    for (var modelName in models) {
+      adapter.map[adapterName + '.' + modelName] = adapterName;
+    }
+  }
+
+  // console.log(adapter.map)
 }
+
+/**
+ * Lookup for adapter by model/adapter/stream name.
+ */
+
+adapter.map = {};
