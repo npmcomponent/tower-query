@@ -242,7 +242,7 @@ Query.prototype.relation = function(type, key){
  * @param {String} op Operator string
  * @param {String} key
  * @param {Object} val
- * @api private
+ * @api public
  */
 
 Query.prototype.constraint = function(key, op, val){
