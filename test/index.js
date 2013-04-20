@@ -7,8 +7,9 @@ describe('query', function(){
   it('should chain', function(){
     var criteria = query()
       .start('users')
-      .where('likeCount').gte(10)
-      .where('likeCount').lte(200)
+      .where('likeCount')
+        .gte(10)
+        .lte(200)
       .criteria;
 
     var expected = [

@@ -315,6 +315,7 @@ Query.prototype.reset = function(){
  */
 
 Query.prototype.exec = function(fn){
+  context = undefined;
   // XXX: only support one adapter for now.
   if (!this._adapter) throw new Error('Must `use` an adapter');
   // adapter.execute returns a `Topology` instance.
