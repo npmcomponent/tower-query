@@ -185,7 +185,6 @@ each(['eq', 'neq', 'gte', 'gt', 'lte', 'lt', 'in', 'nin'], function(operator){
 each([
     'query'
   , 'find'
-  , 'update'
   , 'remove'
   , 'pipe'
   , 'stream'
@@ -206,6 +205,10 @@ each([
 
 Query.prototype.create = function(data, fn){
   return this.action('create', data).execute(fn);
+}
+
+Query.prototype.update = function(data, fn){
+  return this.action('update', data).execute(fn);
 }
 
 /**
