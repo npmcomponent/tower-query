@@ -322,6 +322,8 @@ Query.prototype.exec = function(fn){
   return adapter(this._adapter).execute(this.criteria, fn);
 }
 
+Query.prototype.execute = Query.prototype.exec;
+
 Query.prototype.use = function(name){
   this._adapter = name;
   return this;
