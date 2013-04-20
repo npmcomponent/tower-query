@@ -42,6 +42,14 @@ of the information needed to assess their relationship.
 - http://stackoverflow.com/questions/1482619/shortest-path-for-a-dag
 - http://www.columbia.edu/~cs2035/courses/ieor6614.S09/sp.pdf
 - http://www.stoimen.com/blog/2012/10/28/computer-algorithms-shortest-path-in-a-directed-acyclic-graph/
+- http://stackoverflow.com/questions/905379/what-is-the-difference-between-join-and-union
+- http://blog.sqlauthority.com/2008/08/03/sql-server-2005-difference-between-intersect-and-inner-join-intersect-vs-inner-join/
+- http://www.codinghorror.com/blog/2007/10/a-visual-explanation-of-sql-joins.html
+- http://www.cs.indiana.edu/~vgucht/ImplementationGQL.pdf
+- https://wiki.engr.illinois.edu/download/attachments/186384416/gql_camera.pdf?version=1&modificationDate=1256250869000
+- [G-SPARQL: A Hybrid Engine for Querying Large Attributed Graphs](http://research.microsoft.com/pubs/157417/GSPARQL.pdf)
+- [Query Languages for Graph Databases](http://users.dcc.uchile.cl/~pbarcelo/wood.pdf)
+- http://www.cs.wayne.edu/~shiyong/papers/scc11a.pdf
 
 ## License
 

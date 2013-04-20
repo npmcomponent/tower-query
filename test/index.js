@@ -6,17 +6,19 @@ var query = require('..')
 describe('query', function(){
   it('should chain', function(){
     var criteria = query()
-      .start('users')
+      .start('user')
       .where('likeCount')
         .gte(10)
         .lte(200)
       .criteria;
 
     var expected = [
-        ['start', 'users']
-      , ['constraint', 'likeCount', 'gte', 10]
-      , ['constraint', 'likeCount', 'lte', 200]
+        ['start', 'user']
+      , ['constraint', query.key('likeCount'), 'gte', 10]
+      , ['constraint', query.key('likeCount'), 'lte', 200]
     ];
+
+    // constraint(query.key('likeCount'), query.operator('gte'), query.val(10))
 
     assert.deepEqual(expected, criteria);
   });
@@ -104,7 +106,7 @@ describe('query', function(){
       , { name: 'fourth', likeCount: 300 }
     ];
 
-    stream('users.find')
+    stream('user.find')
       .on('exec', function(context, data, fn){
         var matches = [];
 
@@ -116,10 +118,10 @@ describe('query', function(){
             if (success) {
               switch (constraint[2]) {
                 case 'gte':
-                  success = user[constraint[1]] >= constraint[3];
+                  success = user[constraint[1].attr] >= constraint[3];
                   break;
                 case 'lt':
-                  success = user[constraint[1]] < constraint[3];
+                  success = user[constraint[1].attr] < constraint[3];
                   break;
               }
             }
@@ -137,7 +139,7 @@ describe('query', function(){
       });
 
     var topology = query()
-      .start('users')
+      .start('user')
       .where('likeCount')
         .gte(10)
         .lt(20)

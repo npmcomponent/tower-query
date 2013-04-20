@@ -10,7 +10,7 @@ var Topology = require('tower-topology').Topology
   , each = require('part-each-array')
   , slice = [].slice
   // used in `.where`
-  , context;
+  , context, start;
 
 /**
  * Expose `query`.
@@ -41,6 +41,35 @@ function query(name) {
 var queries = exports.queries = {};
 
 /**
+ * Variables used in query.
+ */
+
+query.key = function(val){
+  var variable = {};
+
+  val = val.split('.');
+
+  switch (val.length) {
+    case 3:
+      variable.adapter = val[0];
+      variable.model = val[1];
+      variable.attr = val[2];
+      break;
+    case 2:
+      // result.adapter = defaultAdapter
+      variable.model = val[0];
+      variable.attr = val[1];
+      break;
+    case 1:
+      variable.model = start;
+      variable.attr = val[0];
+      break;
+  }
+
+  return variable;
+}
+
+/**
  * Construct a new `Query` instance.
  */
 
@@ -58,6 +87,7 @@ function Query(name) {
  */
 
 Query.prototype.start = function(key, val){
+  start = key;
   return this.push('start', key);
 }
 
@@ -221,6 +251,7 @@ Query.prototype.returns = function(key){
 }
 
 Query.prototype.select = function(key){
+  start = start || key;
   return this.push('select', key);
 }
 
@@ -246,7 +277,7 @@ Query.prototype.relation = function(type, key){
  */
 
 Query.prototype.constraint = function(key, op, val){
-  return this.push('constraint', key, op, val);
+  return this.push('constraint', query.key(key), op, val);
 }
 
 /**
@@ -315,7 +346,7 @@ Query.prototype.reset = function(){
  */
 
 Query.prototype.exec = function(fn){
-  context = undefined;
+  context = start = undefined;
   // XXX: only support one adapter for now.
   if (!this._adapter) throw new Error('Must `use` an adapter');
   // adapter.execute returns a `Topology` instance.
@@ -361,10 +392,6 @@ function queryToTopology(q) {
     , criteria = q.criteria
     , name;
 
-  if (q._explain) q._explain(criteria);
-
-  var adapters = {};
-
   // XXX: this function should just split the criteria by model/adapter.
   // then the adapter
   for (var i = 0, n = criteria.length; i < n; i++) {
@@ -374,7 +401,6 @@ function queryToTopology(q) {
       case 'start':
         // XXX: since this is just going to support one adapter at a time for now,
         // need to pass criteria off to it.
-        var adapterName = adapterFor(criterion[1]);
         topology.stream(name = criterion[1] + '.find', { constraints: [] });
         break;
       case 'constraint':
@@ -385,39 +411,3 @@ function queryToTopology(q) {
 
   return topology;
 }
-
-/**
- * user
- * facebook.user
- * twitter.user
- * users
- */
-
-function adapterFor(path) {
-  if (adapter.map[path]) return adapter(adapter.map[path]);
-
-  // need to get plural/singular map of model (user/users)
-  var parts = path.split('.');
-  // 3 === [adapter, model, attr|relation]
-  // 2 === [adapter, model]
-  // 2 === [model, attr]
-  // 1 === [model]
-  // 1 === [attr]
-
-  var adapters = adapter.instances;
-
-  for (var adapterName in adapters) {
-    var models = adapters[adapterName].resources;
-    for (var modelName in models) {
-      adapter.map[adapterName + '.' + modelName] = adapterName;
-    }
-  }
-
-  // console.log(adapter.map)
-}
-
-/**
- * Lookup for adapter by model/adapter/stream name.
- */
-
-adapter.map = {};
