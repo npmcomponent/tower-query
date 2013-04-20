@@ -13,7 +13,7 @@ var Topology = require('tower-topology').Topology
  * Expose `query`.
  */
 
-var exports = module.exports = query;
+exports = module.exports = query;
 
 /**
  * Expose `Query`.
@@ -25,16 +25,25 @@ exports.Query = Query;
  * Wrap an array for chaining query criteria.
  */
 
-function query(criteria) {
-  return new Query(criteria);
+function query(name) {
+  return null == name
+    ? new Query
+    : queries[name] || (queries[name] = new Query(name));
 }
+
+/**
+ * Named queries.
+ */
+
+var queries = exports.queries = {};
 
 /**
  * Construct a new `Query` instance.
  */
 
-function Query(criteria) {
-  this.criteria = criteria || [];
+function Query(name) {
+  this.name = name;
+  this.criteria = [];
 }
 
 /**
@@ -418,7 +427,7 @@ Query.prototype.reset = function(){
  *      Later, you can query across multiple adapters
  */
 
-Query.prototype.execute = function(fn){
+Query.prototype.exec = function(fn){
   // XXX: only support one adapter for now.
   if (!this._adapter) throw new Error('Must `use` an adapter');
   // adapter.execute returns a `Topology` instance.

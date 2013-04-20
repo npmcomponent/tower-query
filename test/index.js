@@ -90,7 +90,7 @@ describe('query', function(){
     var topology = query()
       .use('example')
       .select('user')
-      .execute(function(){
+      .exec(function(){
         done();
       });
   });
@@ -104,7 +104,7 @@ describe('query', function(){
     ];
 
     stream('users.find')
-      .on('execute', function(context, data, fn){
+      .on('exec', function(context, data, fn){
         var matches = [];
 
         users.forEach(function(user){
@@ -152,6 +152,13 @@ describe('query', function(){
         assert('second' === result[0].name)
         done();
       })
-      .execute();
+      .exec();
+  });
+
+  it('should save named queries', function(){
+    var named = query('foo')
+      .where('x', 1);
+
+    assert(named === query('foo'));
   });
 });
