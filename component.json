@@ -12,6 +12,7 @@
     "nosql"
   ],
   "dependencies": {
+    "part/each-array": "*"
   },
   "scripts": ["index.js"],
   "license": "MIT"

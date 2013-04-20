@@ -7,8 +7,8 @@ describe('query', function(){
   it('should chain', function(){
     var criteria = query()
       .start('users')
-      .gte('likeCount', 10)
-      .lte('likeCount', 200)
+      .where('likeCount').gte(10)
+      .where('likeCount').lte(200)
       .criteria;
 
     var expected = [
@@ -27,8 +27,8 @@ describe('query', function(){
       .select('facebook.user')
       .select('twitter.user')
       // random constraints purely on the models
-      .gte('user.likeCount', 10)
-      .gte('facebook.likeCount', 20)
+      .where('user.likeCount').gte(10)
+      .where('facebook.likeCount').gte(20)
       // constraints between models
       // .on('exec', function(context) { context.tests[user.id] = context.constraints.length })
       // if (context.tests[user.id] === 0)
@@ -137,8 +137,9 @@ describe('query', function(){
 
     var topology = query()
       .start('users')
-      .gte('likeCount', 10)
-      .lt('likeCount', 20)
+      .where('likeCount')
+        .gte(10)
+        .lt(20)
       .topology();
 
     var result;

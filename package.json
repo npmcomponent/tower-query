@@ -5,6 +5,7 @@
   "dependencies": {
     "tower-topology": "*",
     "tower-stream": "*",
-    "tower-adapter": "*"
+    "tower-adapter": "*",
+    "part-each-array": "*"
   }
 }

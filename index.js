@@ -7,7 +7,10 @@
 // and the compiling happens in tower-graph?
 var Topology = require('tower-topology').Topology
   , adapter = require('tower-adapter')
-  , slice = [].slice;
+  , each = require('part-each-array')
+  , slice = [].slice
+  // used in `.where`
+  , context;
 
 /**
  * Expose `query`.
@@ -58,9 +61,10 @@ Query.prototype.start = function(key, val){
   return this.push('start', key);
 }
 
-Query.prototype.where = function(key, val){
+Query.prototype.where = function(key){
   // this._key = key;
-  return this.constraint('eq', key, val);
+  context = key;
+  return this;
 }
 
 /**
@@ -117,181 +121,61 @@ Query.prototype.as = function(key){
   return this.push('as', key);
 }
 
-Query.prototype.eq = function(key){
-  return this.push('eq', key);
-}
-
 /**
- * Append "greater than or equal to" constraint to query.
+ * Append constraint to query.
  *
  * Example:
  *
- *    query().start('users').gte('likeCount', 10);
+ *    query().start('users').where('likeCount').lte(200);
  *
  * @param {String}       key  The property to compare `val` to.
  * @param {Number|Date}  val
  * @api public
  */
 
-Query.prototype.gte = function(key, val){
-  return this.constraint('gte', key, val);
-}
+each(['eq', 'neq', 'gte', 'gt', 'lte', 'lt', 'in', 'nin'], function(operator){
+  Query.prototype[operator] = function(val){
+    return this.constraint(context, operator, val);
+  }
+});
 
 /**
- * Append "greater than" constraint to query.
- *
- * Example:
- *
- *    query().start('users').gt('likeCount', 10);
- *
- * @param {String}       key  The property to compare `val` to.
- * @param {Number|Date}  val
- * @api public
- */
-
-Query.prototype.gt = function(key, val){
-  return this.constraint('gt', key, val);
-}
-
-/**
- * Append "less than or equal to" constraint to query.
- *
- * Example:
- *
- *    query().start('users').lte('likeCount', 200);
- *
- * @param {String}       key  The property to compare `val` to.
- * @param {Number|Date}  val
- * @api public
- */
-
-Query.prototype.lte = function(key, val){
-  return this.constraint('lte', key, val);
-}
-
-/**
- * Append "less than" constraint to query.
- *
- * Example:
- *
- *    query().start('users').lt('likeCount', 200);
- *
- * @param {String}       key  The property to compare `val` to.
- * @param {Number|Date}  val
- * @api public
- */
-
-Query.prototype.lt = function(key, val){
-  return this.constraint('lt', key, val);
-}
-
-Query.prototype.find = function(fn){
-  return this.action('find', fn);
-}
-
-/**
- * Tell adapter to insert `data` 
- * (or matching criteria) at this point.
+ * Append action to query, then execute.
  *
  * Example:
  *
  *    query().start('users')
  *      .insert({ email: 'john.smith@gmail.com' });
  *
- * @api public
- */
-
-Query.prototype.insert = function(data){
-  return this.action('insert', data);
-}
-
-/**
- * Tell adapter to update `data` 
- * (or matching criteria) at this point.
- *
- * Example:
- *
- *    query().start('users').update({ likeCount: 0 });
- *
- * @api public
- */
-
-Query.prototype.update = function(data){
-  return this.action('update', data);
-}
-
-/**
- * Tell adapter to remove `data` 
- * (or matching criteria) at this point.
- *
- * Example:
- *
- *    query().start('users').remove();
- *
- * @api public
- */
-
-Query.prototype.remove = function(data){
-  return this.action('remove', data);
-}
-
-/**
- * Tell adapter to query at this point.
- *
- * Example:
- *
  *    query().start('users').query(fn);
  *
  * @api public
  */
 
-Query.prototype.query = function(fn){
-  return this.action('query', fn);
-}
+each([
+    'query'
+  , 'find'
+  , 'update'
+  , 'remove'
+  , 'pipe'
+  , 'stream'
+  , 'count'
+  , 'exists'
+], function(action){
+  Query.prototype[action] = function(fn){
+    return this.action(action).execute(fn);
+  }
+});
 
 /**
- * Tell adapter to pipe data into `fn` at this point.
+ * Create one or more records.
  *
- * XXX: Not sure if this is an "action" 
- * or a different class of operations.
- *
- * Example:
- *
- *    query().start('users').pipe(req);
- *
- * @api public
+ * This is different from the other actions 
+ * in that it can take data (records) as arguments.
  */
 
-Query.prototype.pipe = function(fn){
-  return this.action('pipe', fn);
-}
-
-/**
- * Tell adapter to count at this point.
- *
- * Example:
- *
- *    query().start('users').count(fn);
- *
- * @api public
- */
-
-Query.prototype.count = function(fn){
-  return this.action('count', fn);
-}
-
-/**
- * Tell adapter to check if records matching criteria exist.
- *
- * Example:
- *
- *    query().start('users').exists(fn);
- *
- * @api public
- */
-
-Query.prototype.exists = function(fn){
-  return this.action('exists', fn);
+Query.prototype.create = function(data, fn){
+  return this.action('create', data).execute(fn);
 }
 
 /**
@@ -361,7 +245,7 @@ Query.prototype.relation = function(type, key){
  * @api private
  */
 
-Query.prototype.constraint = function(op, key, val){
+Query.prototype.constraint = function(key, op, val){
   return this.push('constraint', key, op, val);
 }
 
@@ -381,6 +265,9 @@ Query.prototype.constraint = function(op, key, val){
 Query.prototype.action = function(type, data){
   return this.push('action', type, data);
 }
+
+// XXX: only do if it decreases final file size
+// each(['find', 'create', 'update', 'delete'])
 
 /**
  * Pushes a sort direction onto the query.
