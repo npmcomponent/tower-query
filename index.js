@@ -163,7 +163,7 @@ Query.prototype.as = function(key){
  * @api public
  */
 
-each(['eq', 'neq', 'gte', 'gt', 'lte', 'lt', 'in', 'nin'], function(operator){
+each(['eq', 'neq', 'gte', 'gt', 'lte', 'lt', 'in', 'nin', 'match'], function(operator){
   Query.prototype[operator] = function(val){
     return this.constraint(context, operator, val);
   }
@@ -351,7 +351,8 @@ Query.prototype.reset = function(){
 Query.prototype.exec = function(fn){
   context = start = undefined;
   // XXX: only support one adapter for now.
-  if (!this._adapter) throw new Error('Must `use` an adapter');
+  if (!this._adapter) this._adapter = 'memory';//throw new Error('Must `use` an adapter');
+  require('tower-memory-adapter');
   // adapter.execute returns a `Topology` instance.
   return adapter(this._adapter).execute(this.criteria, fn);
 }
