@@ -212,6 +212,14 @@ Query.prototype.update = function(data, fn){
 }
 
 /**
+ * Add validations to perform before this is executed.
+ */
+
+Query.prototype.validate = function(fn){
+  return this.push('validate', fn);
+}
+
+/**
  * Sort ascending by `key`.
  *
  * If the key is a property name, it will
