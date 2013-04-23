@@ -12,7 +12,9 @@
     "nosql"
   ],
   "dependencies": {
-    "part/each-array": "*"
+    "part/each-array": "*",
+    "tower/topology": "*",
+    "tower/adapter": "*"
   },
   "scripts": ["index.js"],
   "license": "MIT"
