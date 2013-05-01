@@ -13,13 +13,13 @@ describe('query', function(){
       .criteria;
 
     var expected = [
-        [ 'start', { model: 'user' } ]
+        [ 'start', { model: 'user', ns: 'user' } ]
       , [ 'constraint', {
-            left: { adapter: 'memory', model: 'user', attr: 'likeCount' }
+            left: { adapter: 'memory', model: 'user', attr: 'likeCount', ns: 'user' }
           , operator: 'gte'
           , right: { value: 10, type: 'number' } } ]
       , [ 'constraint', {
-            left: { adapter: 'memory', model: 'user', attr: 'likeCount' }
+            left: { adapter: 'memory', model: 'user', attr: 'likeCount', ns: 'user' }
           , operator: 'lte'
           , right: { value: 200, type: 'number' } } ]
     ];
@@ -118,12 +118,12 @@ describe('query', function(){
           context.constraints.forEach(function(constraint){
             // XXX: operators
             if (success) {
-              switch (constraint[2]) {
+              switch (constraint[1].operator) {
                 case 'gte':
-                  success = user[constraint[1].attr] >= constraint[3];
+                  success = user[constraint[1].left.attr] >= constraint[1].right.value;
                   break;
                 case 'lt':
-                  success = user[constraint[1].attr] < constraint[3];
+                  success = user[constraint[1].left.attr] < constraint[1].right.value;
                   break;
               }
             }
@@ -166,5 +166,20 @@ describe('query', function(){
       .where('x', 1);
 
     assert(named === query('foo'));
+  });
+
+  it('should validate a query', function(done){
+    stream('foo.find')
+      .param('bar', 'string')
+        .validate('in', [ 'a', 'b' ]);
+
+    query()
+      .select('foo')
+      .where('bar').eq('a')
+      .action('find')
+      .validate(function(){
+        console.log('DONE')
+        done();
+      });
   });
 });

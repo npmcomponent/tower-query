@@ -7,6 +7,7 @@
 // and the compiling happens in tower-graph?
 var Topology = require('tower-topology').Topology
   , adapter = require('tower-adapter')
+  , stream = require('tower-stream')
   , each = require('part-each-array')
   , isArray = require('part-is-array')
   , context, start; // used in `.where`
@@ -40,54 +41,11 @@ function query(name) {
 var queries = exports.queries = {};
 
 /**
- * Variables used in query.
- */
-
-query.key = function(val){
-  var variable = {};
-
-  val = val.split('.');
-
-  switch (val.length) {
-    case 3:
-      variable.adapter = val[0];
-      variable.model = val[1];
-      variable.attr = val[2];
-      break;
-    case 2:
-      // result.adapter = defaultAdapter
-      variable.model = val[0];
-      variable.attr = val[1];
-      break;
-    case 1:
-      variable.adapter = 'memory'; // XXX: adapter.default();
-      variable.model = start;
-      variable.attr = val[0];
-      break;
-  }
-
-  return variable;
-}
-
-function queryModel(key) {
-  key = key.split('.');
-
-  if (2 === key.length)
-    return { adapter: key[0], model: key[1] };
-  else
-    return { model: key[0] }; // XXX: adapter: adapter.default()
-}
-
-function queryValue(val) {
-  // XXX: eventually handle relations/joins.
-  return { value: val, type: typeof(val) };
-}
-
-/**
  * Construct a new `Query` instance.
  */
 
 function Query(name) {
+  start = undefined;
   this.name = name;
   this.criteria = [];
 }
@@ -177,11 +135,15 @@ Query.prototype.as = function(key){
  * @api public
  */
 
-each(['eq', 'neq', 'gte', 'gt', 'lte', 'lt', 'in', 'nin', 'match'], function(operator){
+each(['eq', 'neq', 'gte', 'gt', 'lte', 'lt', 'nin', 'match'], function(operator){
   Query.prototype[operator] = function(val){
     return this.constraint(context, operator, val);
   }
 });
+
+Query.prototype.contains = function(val){
+  return this.constraint(context, 'in', val);
+}
 
 /**
  * Append action to query, then execute.
@@ -232,7 +194,29 @@ Query.prototype.update = function(data, fn){
  */
 
 Query.prototype.validate = function(fn){
-  return this.push('validate', fn);
+  // XXX: only supports one action at a time atm.
+  var criteria = this.criteria;
+  var action = criteria[criteria.length - 1][1];
+  var ctx = this;
+  // XXX: collect validators for model and for each attribute.
+  // var modelValidators = model(criteria[0][1].ns).validators;
+  for (var i = 0, n = criteria.length; i < n; i++) {
+    if ('constraint' !== criteria[i][0]) continue;
+
+    var constraint = criteria[i][1];
+
+    if (stream.exists(constraint.left.ns + '.' + action)) {
+      var _action = stream(constraint.left.ns + '.' + action);//.params;
+      var params = _action.attrs;
+      if (params[constraint.left.attr]) {
+        params[constraint.left.attr].validators.forEach(function(validator){
+          validator(ctx, constraint);
+        });
+      }
+    }
+  }
+  // return this.push('validate', fn);
+  fn();
 }
 
 /**
@@ -279,7 +263,7 @@ Query.prototype.returns = function(key){
 
 Query.prototype.select = function(key){
   start = start || key;
-  return this.push('select', query.key(key));
+  return this.push('select', queryAttr(key));
 }
 
 /**
@@ -291,7 +275,7 @@ Query.prototype.select = function(key){
  */
 
 Query.prototype.relation = function(dir, key){
-  var attr = query.key(key);
+  var attr = queryAttr(key);
   attr.direction = dir;
   return this.push('relation', attr);
 }
@@ -309,7 +293,7 @@ Query.prototype.relation = function(dir, key){
 
 Query.prototype.constraint = function(key, op, val){
   return this.push('constraint', {
-      left: query.key(key)
+      left: queryAttr(key)
     , operator: op
     , right: queryValue(val)
   });
@@ -344,7 +328,7 @@ Query.prototype.action = function(type, data){
  */
 
 Query.prototype.order = function(dir, key){
-  var attr = query.key(key);
+  var attr = queryAttr(key);
   attr.direction = key;
   return this.push('order', attr);
 }
@@ -450,7 +434,7 @@ function queryToTopology(q) {
       case 'start':
         // XXX: since this is just going to support one adapter at a time for now,
         // need to pass criteria off to it.
-        topology.stream(name = criterion[1] + '.find', { constraints: [] });
+        topology.stream(name = criterion[1].ns + '.find', { constraints: [] });
         break;
       case 'constraint':
         topology.streams[name].constraints.push(criterion);
@@ -459,4 +443,51 @@ function queryToTopology(q) {
   }
 
   return topology;
+}
+
+function queryModel(key) {
+  key = key.split('.');
+
+  if (2 === key.length)
+    return { adapter: key[0], model: key[1], ns: key[0] + '.' + key[1] };
+  else
+    return { model: key[0], ns: key[0] }; // XXX: adapter: adapter.default()
+}
+
+/**
+ * Variables used in query.
+ */
+
+function queryAttr(val){
+  var variable = {};
+
+  val = val.split('.');
+
+  switch (val.length) {
+    case 3:
+      variable.adapter = val[0];
+      variable.model = val[1];
+      variable.attr = val[2];
+      variable.ns = variable.adapter + '.' + variable.model;
+      break;
+    case 2:
+      variable.adapter = 'memory'; // XXX: adapter.default();
+      variable.model = val[0];
+      variable.attr = val[1];
+      variable.ns = variable.model;
+      break;
+    case 1:
+      variable.adapter = 'memory'; // XXX: adapter.default();
+      variable.model = start;
+      variable.attr = val[0];
+      variable.ns = variable.model;
+      break;
+  }
+
+  return variable;
+}
+
+function queryValue(val) {
+  // XXX: eventually handle relations/joins.
+  return { value: val, type: typeof(val) };
 }
