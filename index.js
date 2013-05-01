@@ -8,9 +8,8 @@
 var Topology = require('tower-topology').Topology
   , adapter = require('tower-adapter')
   , each = require('part-each-array')
-  , slice = [].slice
-  // used in `.where`
-  , context, start;
+  , isArray = require('part-is-array')
+  , context, start; // used in `.where`
 
 /**
  * Expose `query`.
@@ -61,12 +60,27 @@ query.key = function(val){
       variable.attr = val[1];
       break;
     case 1:
+      variable.adapter = 'memory'; // XXX: adapter.default();
       variable.model = start;
       variable.attr = val[0];
       break;
   }
 
   return variable;
+}
+
+function queryModel(key) {
+  key = key.split('.');
+
+  if (2 === key.length)
+    return { adapter: key[0], model: key[1] };
+  else
+    return { model: key[0] }; // XXX: adapter: adapter.default()
+}
+
+function queryValue(val) {
+  // XXX: eventually handle relations/joins.
+  return { value: val, type: typeof(val) };
 }
 
 /**
@@ -88,7 +102,7 @@ function Query(name) {
 
 Query.prototype.start = function(key, val){
   start = key;
-  return this.push('start', key);
+  return this.push('start', queryModel(key));
 }
 
 Query.prototype.where = function(key){
@@ -213,6 +227,8 @@ Query.prototype.update = function(data, fn){
 
 /**
  * Add validations to perform before this is executed.
+ *
+ * XXX: not implemented.
  */
 
 Query.prototype.validate = function(fn){
@@ -263,7 +279,7 @@ Query.prototype.returns = function(key){
 
 Query.prototype.select = function(key){
   start = start || key;
-  return this.push('select', key);
+  return this.push('select', query.key(key));
 }
 
 /**
@@ -274,8 +290,10 @@ Query.prototype.select = function(key){
  * @api private
  */
 
-Query.prototype.relation = function(type, key){
-  return this.push('relation', type, key);
+Query.prototype.relation = function(dir, key){
+  var attr = query.key(key);
+  attr.direction = dir;
+  return this.push('relation', attr);
 }
 
 /**
@@ -285,10 +303,16 @@ Query.prototype.relation = function(type, key){
  * @param {String} key
  * @param {Object} val
  * @api public
+ *
+ * @see http://en.wikipedia.org/wiki/Lagrange_multiplier
  */
 
 Query.prototype.constraint = function(key, op, val){
-  return this.push('constraint', query.key(key), op, val);
+  return this.push('constraint', {
+      left: query.key(key)
+    , operator: op
+    , right: queryValue(val)
+  });
 }
 
 /**
@@ -296,8 +320,8 @@ Query.prototype.constraint = function(key, op, val){
  *
  * Example:
  *
- *    query().action('insert', {message: 'Test'});
- *    query().action('insert', [{message: 'one.'}, {message: 'two.'}]);
+ *    query().action('insert', { message: 'Test' });
+ *    query().action('insert', [ { message: 'one.' }, { message: 'two.' } ]);
  *
  * @param {String} type
  * @param {Object|Array} data The data to act on.
@@ -305,7 +329,7 @@ Query.prototype.constraint = function(key, op, val){
  */
 
 Query.prototype.action = function(type, data){
-  return this.push('action', type, data);
+  return this.push('action', type, data ? isArray(data) ? data : [data] : undefined);
 }
 
 // XXX: only do if it decreases final file size
@@ -313,14 +337,16 @@ Query.prototype.action = function(type, data){
 
 /**
  * Pushes a sort direction onto the query.
-
+ *
  * @param {Integer} dir   Direction it should point (-1, 1, 0).
  * @param {String}  key   The property to sort on.
  * @api private
  */
 
 Query.prototype.order = function(dir, key){
-  return this.push('order', dir, key);
+  var attr = query.key(key);
+  attr.direction = key;
+  return this.push('order', attr);
 }
 
 /**
@@ -329,8 +355,8 @@ Query.prototype.order = function(dir, key){
  * @api private
  */
 
-Query.prototype.push = function(){
-  this.criteria.push(slice.call(arguments));
+Query.prototype.push = function(type, data){
+  this.criteria.push([type, data]);
   return this;
 }
 
@@ -359,13 +385,24 @@ Query.prototype.reset = function(){
 Query.prototype.exec = function(fn){
   context = start = undefined;
   // XXX: only support one adapter for now.
-  if (!this._adapter) this._adapter = 'memory';//throw new Error('Must `use` an adapter');
-  // require('tower-memory-adapter');
-  // adapter.execute returns a `Topology` instance.
+  if (!this._adapter) this._adapter = 'memory';
+  // XXX: do validations right here before going to the adapter.
   return adapter(this._adapter).execute(this.criteria, fn);
 }
 
-Query.prototype.execute = Query.prototype.exec;
+/**
+ * Explicitly tell the query what adapters to use.
+ *
+ * If not specified, it will do its best to find
+ * the adapter. If one or more are specified, the
+ * first specified will be the default, and its namespace
+ * can be left out of the models used in the query
+ * (e.g. `user` vs. `facebook.user` if `query().use('facebook').select('user')`).
+ *
+ * @param {String} name Name of the adapter.
+ *   In `package.json`, maybe this is under a `"key": "memory"` property.
+ * @return {this}
+ */
 
 Query.prototype.use = function(name){
   this._adapter = name;

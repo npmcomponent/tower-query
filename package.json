@@ -6,6 +6,7 @@
     "tower-topology": "*",
     "tower-stream": "*",
     "tower-adapter": "*",
-    "part-each-array": "*"
+    "part-each-array": "*",
+    "part-is-array": "*"
   }
 }

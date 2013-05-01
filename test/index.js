@@ -13,12 +13,16 @@ describe('query', function(){
       .criteria;
 
     var expected = [
-        ['start', 'user']
-      , ['constraint', query.key('likeCount'), 'gte', 10]
-      , ['constraint', query.key('likeCount'), 'lte', 200]
+        [ 'start', { model: 'user' } ]
+      , [ 'constraint', {
+            left: { adapter: 'memory', model: 'user', attr: 'likeCount' }
+          , operator: 'gte'
+          , right: { value: 10, type: 'number' } } ]
+      , [ 'constraint', {
+            left: { adapter: 'memory', model: 'user', attr: 'likeCount' }
+          , operator: 'lte'
+          , right: { value: 200, type: 'number' } } ]
     ];
-
-    // constraint(query.key('likeCount'), query.operator('gte'), query.val(10))
 
     assert.deepEqual(expected, criteria);
   });
@@ -80,10 +84,8 @@ describe('query', function(){
 
   it('should execute adapter', function(done){
     adapter('example')
-      .model('user');
-
-    adapter('example')
-      .action('user.find');
+      .model('user')
+        .action('find');
 
     adapter('example').execute = function(criteria, fn){
       assert(1 === criteria.length);

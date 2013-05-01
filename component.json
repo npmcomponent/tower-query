@@ -13,8 +13,10 @@
   ],
   "dependencies": {
     "part/each-array": "*",
+    "part/is-array": "*",
     "tower/topology": "*",
-    "tower/adapter": "*"
+    "tower/adapter": "*",
+    "component/type": "*"
   },
   "scripts": ["index.js"],
   "license": "MIT"
