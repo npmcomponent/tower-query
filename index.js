@@ -400,19 +400,6 @@ Query.prototype.use = function(name){
 }
 
 /**
- * Compile query to a `Topology`.
- *
- * Builds an acyclic dependency graph.
- *
- * Make sure the graph is **acyclic** (no directed cycles)!
- * @see http://stackoverflow.com/questions/261573/best-algorithm-for-detecting-cycles-in-a-directed-graph
- */
-
-Query.prototype.topology = function(){
-  return this;
-};
-
-/**
  * A way to log the query criteria,
  * so you can see if the adapter supports it.
  */
