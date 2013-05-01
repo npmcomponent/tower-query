@@ -195,6 +195,7 @@ Query.prototype.update = function(data, fn){
 
 Query.prototype.validate = function(fn){
   // XXX: only supports one action at a time atm.
+  this.errors = [];
   var criteria = this.criteria;
   var action = criteria[criteria.length - 1][1];
   var ctx = this;
@@ -216,7 +217,8 @@ Query.prototype.validate = function(fn){
     }
   }
   // return this.push('validate', fn);
-  fn();
+  console.log(this.errors)
+  this.errors.length ? fn(this.errors) : fn();
 }
 
 /**
@@ -483,6 +485,8 @@ function queryAttr(val){
       variable.ns = variable.model;
       break;
   }
+  
+  variable.path = variable.ns + '.' + variable.attr;
 
   return variable;
 }

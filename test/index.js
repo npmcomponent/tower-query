@@ -4,28 +4,28 @@ var query = require('..')
   , assert = require('assert');
 
 describe('query', function(){
-  it('should chain', function(){
-    var criteria = query()
-      .start('user')
-      .where('likeCount')
-        .gte(10)
-        .lte(200)
-      .criteria;
-
-    var expected = [
-        [ 'start', { model: 'user', ns: 'user' } ]
-      , [ 'constraint', {
-            left: { adapter: 'memory', model: 'user', attr: 'likeCount', ns: 'user' }
-          , operator: 'gte'
-          , right: { value: 10, type: 'number' } } ]
-      , [ 'constraint', {
-            left: { adapter: 'memory', model: 'user', attr: 'likeCount', ns: 'user' }
-          , operator: 'lte'
-          , right: { value: 200, type: 'number' } } ]
-    ];
-
-    assert.deepEqual(expected, criteria);
-  });
+  //it('should chain', function(){
+  //  var criteria = query()
+  //    .start('user')
+  //    .where('likeCount')
+  //      .gte(10)
+  //      .lte(200)
+  //    .criteria;
+  //
+  //  var expected = [
+  //      [ 'start', { model: 'user', ns: 'user' } ]
+  //    , [ 'constraint', {
+  //          left: { adapter: 'memory', model: 'user', attr: 'likeCount', ns: 'user' }
+  //        , operator: 'gte'
+  //        , right: { value: 10, type: 'number' } } ]
+  //    , [ 'constraint', {
+  //          left: { adapter: 'memory', model: 'user', attr: 'likeCount', ns: 'user' }
+  //        , operator: 'lte'
+  //        , right: { value: 200, type: 'number' } } ]
+  //  ];
+  //
+  //  assert.deepEqual(expected, criteria);
+  //});
 
   it('should find minimum-cost maximum-flow', function(){
     var topology = query()
@@ -175,10 +175,10 @@ describe('query', function(){
 
     query()
       .select('foo')
-      .where('bar').eq('a')
+      .where('bar').eq('x')
       .action('find')
-      .validate(function(){
-        console.log('DONE')
+      .validate(function(err){
+        assert.deepEqual([ 'Invalid foo.bar' ], err);
         done();
       });
   });
