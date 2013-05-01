@@ -3,8 +3,7 @@
  * Module dependencies.
  */
 
-var optimize = require('tower-query-optimizer')
-  , each = require('part-each-array')
+var each = require('part-each-array')
   , isArray = require('part-is-array')
   , Constraint = require('./lib/constraint');
 
@@ -31,6 +30,9 @@ exports.Constraint = Constraint;
  */
 
 function query(name) {
+  // lazy-load optimizer if none injected.
+  exports.optimizer || (exports.optimizer = require('tower-query-optimizer'));
+
   return null == name
     ? new Query
     : queries[name]
@@ -43,6 +45,12 @@ function query(name) {
  */
 
 var queries = exports.queries = {};
+
+/**
+ * Hook for custom optimizer.
+ */
+
+exports.optimizer = undefined;
 
 /**
  * Construct a new `Query` instance.
@@ -338,8 +346,7 @@ Query.prototype.reset = function(){
 
 Query.prototype.exec = function(fn){
   this.context = this.start = undefined;
-  //optimize(this).exec(fn);
-  return optimize(this, fn);
+  return exports.optimizer(this, fn);
 }
 
 /**
