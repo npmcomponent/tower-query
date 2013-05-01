@@ -217,16 +217,13 @@ Query.prototype.validate = function(fn){
 
     if (stream.exists(constraint.left.ns + '.' + action)) {
       var _action = stream(constraint.left.ns + '.' + action);//.params;
-      var params = _action.attrs;
+      var params = _action.params;
       if (params[constraint.left.attr]) {
-        params[constraint.left.attr].validators.forEach(function(validator){
-          validator(ctx, constraint);
-        });
+        params[constraint.left.attr].validate(ctx, constraint);
       }
     }
   }
   // return this.push('validate', fn);
-  console.log(this.errors)
   this.errors.length ? fn(this.errors) : fn();
 }
 
@@ -377,6 +374,7 @@ Query.prototype.exec = function(fn){
   context = start = undefined;
   // XXX: only support one adapter for now.
   if (!this._adapter) this._adapter = 'memory';
+  // this.validate();
   // XXX: do validations right here before going to the adapter.
   return adapter(this._adapter).execute(this.criteria, fn);
 }
