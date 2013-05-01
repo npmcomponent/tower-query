@@ -287,7 +287,7 @@ Query.prototype.constraint = function(key, op, val){
  */
 
 Query.prototype.action = function(type, data){
-  return this.push('action', type, data ? isArray(data) ? data : [data] : undefined);
+  return this.push('action', { type: type, data: data ? isArray(data) ? data : [data] : undefined });
 }
 
 // XXX: only do if it decreases final file size
