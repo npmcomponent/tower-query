@@ -6,8 +6,8 @@
 // maybe this query module only builds a dsl,
 // and the compiling happens in tower-graph?
 var Topology = require('tower-topology').Topology
-  , adapter = require('tower-adapter')
   , stream = require('tower-stream')
+  , optimize = require('tower-query-optimizer')
   , each = require('part-each-array')
   , isArray = require('part-is-array')
   , Constraint = require('./lib/constraint')
@@ -368,15 +368,16 @@ Query.prototype.reset = function(){
 /**
  * XXX: For now, only one query per adapter.
  *      Later, you can query across multiple adapters
+ *
+ * @see http://en.wikipedia.org/wiki/Query_optimizer
+ * @see http://en.wikipedia.org/wiki/Query_plan
+ * @see http://homepages.inf.ed.ac.uk/libkin/teach/dbs12/set5.pdf
  */
 
 Query.prototype.exec = function(fn){
   context = start = undefined;
-  // XXX: only support one adapter for now.
-  if (!this._adapter) this._adapter = 'memory';
-  // this.validate();
-  // XXX: do validations right here before going to the adapter.
-  return adapter(this._adapter).exec(this.criteria, fn);
+  //optimize(this).exec(fn);
+  return optimize(this, fn);
 }
 
 /**
@@ -394,7 +395,7 @@ Query.prototype.exec = function(fn){
  */
 
 Query.prototype.use = function(name){
-  this._adapter = name;
+  (this.adapters || (this.adapters = [])).push(name);
   return this;
 }
 
@@ -408,7 +409,7 @@ Query.prototype.use = function(name){
  */
 
 Query.prototype.topology = function(){
-  return queryToTopology(this);
+  return this;
 };
 
 /**
@@ -423,35 +424,6 @@ Query.prototype.explain = function(fn){
 
 Query.prototype.clone = function(){
   return new Query(this.name, this.criteria.concat());
-}
-
-/**
- * Maybe make this a separate module, `tower-query-to-topology`.
- */
-
-function queryToTopology(q) {
-  var topology = new Topology
-    , criteria = q.criteria
-    , name;
-
-  // XXX: this function should just split the criteria by model/adapter.
-  // then the adapter
-  for (var i = 0, n = criteria.length; i < n; i++) {
-    var criterion = criteria[i];
-    switch (criterion[0]) {
-      case 'select':
-      case 'start':
-        // XXX: since this is just going to support one adapter at a time for now,
-        // need to pass criteria off to it.
-        topology.stream(name = criterion[1].ns + '.find', { constraints: [] });
-        break;
-      case 'constraint':
-        topology.streams[name].constraints.push(criterion);
-        break;
-    }
-  }
-
-  return topology;
 }
 
 function queryModel(key) {

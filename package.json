@@ -8,6 +8,6 @@
     "tower-adapter": "*",
     "part-each-array": "*",
     "part-is-array": "*",
-    "tower-constraint": "*"
+    "tower-query-optimizer": "*"
   }
 }
