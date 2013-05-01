@@ -177,7 +177,7 @@ each([
   , 'exists'
 ], function(action){
   Query.prototype[action] = function(fn){
-    return this.action(action).execute(fn);
+    return this.action(action).exec(fn);
   }
 });
 
@@ -189,11 +189,11 @@ each([
  */
 
 Query.prototype.create = function(data, fn){
-  return this.action('create', data).execute(fn);
+  return this.action('create', data).exec(fn);
 }
 
 Query.prototype.update = function(data, fn){
-  return this.action('update', data).execute(fn);
+  return this.action('update', data).exec(fn);
 }
 
 /**
@@ -376,7 +376,7 @@ Query.prototype.exec = function(fn){
   if (!this._adapter) this._adapter = 'memory';
   // this.validate();
   // XXX: do validations right here before going to the adapter.
-  return adapter(this._adapter).execute(this.criteria, fn);
+  return adapter(this._adapter).exec(this.criteria, fn);
 }
 
 /**

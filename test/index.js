@@ -87,7 +87,7 @@ describe('query', function(){
       .model('user')
         .action('find');
 
-    adapter('example').execute = function(criteria, fn){
+    adapter('example').exec = function(criteria, fn){
       assert(1 === criteria.length);
       fn();
     }
