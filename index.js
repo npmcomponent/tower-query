@@ -5,8 +5,7 @@
 
 // maybe this query module only builds a dsl,
 // and the compiling happens in tower-graph?
-var Topology = require('tower-topology').Topology
-  , stream = require('tower-stream')
+var stream = require('tower-stream')
   , optimize = require('tower-query-optimizer')
   , each = require('part-each-array')
   , isArray = require('part-is-array')

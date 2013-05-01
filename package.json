@@ -3,9 +3,7 @@
   "version": "0.0.1",
   "main": "./index.js",
   "dependencies": {
-    "tower-topology": "*",
     "tower-stream": "*",
-    "tower-adapter": "*",
     "part-each-array": "*",
     "part-is-array": "*",
     "tower-query-optimizer": "*"

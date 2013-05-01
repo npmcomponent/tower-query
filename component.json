@@ -14,9 +14,7 @@
   "dependencies": {
     "part/each-array": "*",
     "part/is-array": "*",
-    "tower/topology": "*",
-    "tower/adapter": "*",
-    "component/type": "*",
+    "tower/stream": "*",
     "tower/query-optimizer": "*"
   },
   "scripts": ["index.js", "lib/constraint.js"],
