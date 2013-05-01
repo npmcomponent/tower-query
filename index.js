@@ -3,14 +3,10 @@
  * Module dependencies.
  */
 
-// maybe this query module only builds a dsl,
-// and the compiling happens in tower-graph?
-var stream = require('tower-stream')
-  , optimize = require('tower-query-optimizer')
+var optimize = require('tower-query-optimizer')
   , each = require('part-each-array')
   , isArray = require('part-is-array')
-  , Constraint = require('./lib/constraint')
-  , context, start; // used in `.where`
+  , Constraint = require('./lib/constraint');
 
 /**
  * Expose `query`.
@@ -53,7 +49,6 @@ var queries = exports.queries = {};
  */
 
 function Query(name, criteria) {
-  start = undefined;
   this.name = name;
   this.criteria = criteria || [];
 }
@@ -67,13 +62,12 @@ function Query(name, criteria) {
  */
 
 Query.prototype.start = function(key, val){
-  start = key;
+  this.start = key;
   return this.push('start', queryModel(key));
 }
 
 Query.prototype.where = function(key){
-  // this._key = key;
-  context = key;
+  this.context = key;
   return this;
 }
 
@@ -145,12 +139,12 @@ Query.prototype.as = function(key){
 
 each(['eq', 'neq', 'gte', 'gt', 'lte', 'lt', 'nin', 'match'], function(operator){
   Query.prototype[operator] = function(val){
-    return this.constraint(context, operator, val);
+    return this.constraint(this.context, operator, val);
   }
 });
 
 Query.prototype.contains = function(val){
-  return this.constraint(context, 'in', val);
+  return this.constraint(this.context, 'in', val);
 }
 
 /**
@@ -193,37 +187,6 @@ Query.prototype.create = function(data, fn){
 
 Query.prototype.update = function(data, fn){
   return this.action('update', data).exec(fn);
-}
-
-/**
- * Add validations to perform before this is executed.
- *
- * XXX: not implemented.
- */
-
-Query.prototype.validate = function(fn){
-  // XXX: only supports one action at a time atm.
-  this.errors = [];
-  var criteria = this.criteria;
-  var action = criteria[criteria.length - 1][1];
-  var ctx = this;
-  // XXX: collect validators for model and for each attribute.
-  // var modelValidators = model(criteria[0][1].ns).validators;
-  for (var i = 0, n = criteria.length; i < n; i++) {
-    if ('constraint' !== criteria[i][0]) continue;
-
-    var constraint = criteria[i][1];
-
-    if (stream.exists(constraint.left.ns + '.' + action)) {
-      var _action = stream(constraint.left.ns + '.' + action);//.params;
-      var params = _action.params;
-      if (params[constraint.left.attr]) {
-        params[constraint.left.attr].validate(ctx, constraint);
-      }
-    }
-  }
-  // return this.push('validate', fn);
-  this.errors.length ? fn(this.errors) : fn();
 }
 
 /**
@@ -374,7 +337,7 @@ Query.prototype.reset = function(){
  */
 
 Query.prototype.exec = function(fn){
-  context = start = undefined;
+  this.context = this.start = undefined;
   //optimize(this).exec(fn);
   return optimize(this, fn);
 }
