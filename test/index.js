@@ -165,7 +165,7 @@ describe('query', function(){
     var named = query('foo')
       .where('x', 1);
 
-    assert(named === query('foo'));
+    assert(named.name === query('foo').name);
   });
 
   it('should validate a query', function(done){

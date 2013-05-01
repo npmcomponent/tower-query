@@ -16,8 +16,9 @@
     "part/is-array": "*",
     "tower/topology": "*",
     "tower/adapter": "*",
-    "component/type": "*"
+    "component/type": "*",
+    "tower/constraint": "*"
   },
-  "scripts": ["index.js"],
+  "scripts": ["index.js", "lib/constraint.js"],
   "license": "MIT"
 }

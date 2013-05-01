@@ -7,6 +7,7 @@
     "tower-stream": "*",
     "tower-adapter": "*",
     "part-each-array": "*",
-    "part-is-array": "*"
+    "part-is-array": "*",
+    "tower-constraint": "*"
   }
 }

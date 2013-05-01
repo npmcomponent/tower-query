@@ -10,6 +10,7 @@ var Topology = require('tower-topology').Topology
   , stream = require('tower-stream')
   , each = require('part-each-array')
   , isArray = require('part-is-array')
+  , Constraint = require('./lib/constraint')
   , context, start; // used in `.where`
 
 /**
@@ -25,13 +26,21 @@ exports = module.exports = query;
 exports.Query = Query;
 
 /**
+ * Expose `Constraint`.
+ */
+
+exports.Constraint = Constraint;
+
+/**
  * Wrap an array for chaining query criteria.
  */
 
 function query(name) {
   return null == name
     ? new Query
-    : queries[name] || (queries[name] = new Query(name));
+    : queries[name]
+      ? queries[name].clone()
+      : (queries[name] = new Query(name));
 }
 
 /**
@@ -44,10 +53,10 @@ var queries = exports.queries = {};
  * Construct a new `Query` instance.
  */
 
-function Query(name) {
+function Query(name, criteria) {
   start = undefined;
   this.name = name;
-  this.criteria = [];
+  this.criteria = criteria || [];
 }
 
 /**
@@ -294,11 +303,7 @@ Query.prototype.relation = function(dir, key){
  */
 
 Query.prototype.constraint = function(key, op, val){
-  return this.push('constraint', {
-      left: queryAttr(key)
-    , operator: op
-    , right: queryValue(val)
-  });
+  return this.push('constraint', new Constraint(key, op, val, start));
 }
 
 /**
@@ -418,6 +423,10 @@ Query.prototype.explain = function(fn){
   return this;
 }
 
+Query.prototype.clone = function(){
+  return new Query(this.name, this.criteria.concat());
+}
+
 /**
  * Maybe make this a separate module, `tower-query-to-topology`.
  */
@@ -485,7 +494,7 @@ function queryAttr(val){
       variable.ns = variable.model;
       break;
   }
-  
+
   variable.path = variable.ns + '.' + variable.attr;
 
   return variable;
