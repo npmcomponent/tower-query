@@ -250,8 +250,8 @@ Query.prototype.returns = function(key){
 }
 
 Query.prototype.select = function(key){
-  start = start || key;
-  return this.push('select', queryAttr(key));
+  this.start = this.start || key;
+  return this.push('select', queryAttr(key, this.start));
 }
 
 /**
@@ -263,7 +263,7 @@ Query.prototype.select = function(key){
  */
 
 Query.prototype.relation = function(dir, key){
-  var attr = queryAttr(key);
+  var attr = queryAttr(key, this.start);
   attr.direction = dir;
   return this.push('relation', attr);
 }
@@ -280,7 +280,7 @@ Query.prototype.relation = function(dir, key){
  */
 
 Query.prototype.constraint = function(key, op, val){
-  return this.push('constraint', new Constraint(key, op, val, start));
+  return this.push('constraint', new Constraint(key, op, val, this.start));
 }
 
 /**
@@ -312,7 +312,7 @@ Query.prototype.action = function(type, data){
  */
 
 Query.prototype.order = function(dir, key){
-  var attr = queryAttr(key);
+  var attr = queryAttr(key, this.start);
   attr.direction = key;
   return this.push('order', attr);
 }
@@ -405,7 +405,7 @@ function queryModel(key) {
  * Variables used in query.
  */
 
-function queryAttr(val){
+function queryAttr(val, start){
   var variable = {};
 
   val = val.split('.');
