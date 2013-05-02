@@ -80,6 +80,16 @@ Query.prototype.where = function(key){
 }
 
 /**
+ * Define another query on the parent scope.
+ *
+ * XXX: wire this up with the model (for todomvc).
+ */
+
+Query.prototype.query = function(name) {
+  return query(name);
+}
+
+/**
  * In a graph database, the data pointing _to_ this node.
  * In a relational/document database, the records with
  * a foreign key pointing to this record or set of records.
