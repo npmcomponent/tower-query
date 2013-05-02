@@ -179,8 +179,7 @@ Query.prototype.contains = function(val){
  */
 
 each([
-    'query'
-  , 'find'
+    'find'
   , 'remove'
   , 'pipe'
   , 'stream'
