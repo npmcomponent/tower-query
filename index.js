@@ -191,6 +191,8 @@ each([
   }
 });
 
+Query.prototype.all = Query.prototype.find;
+
 /**
  * Create one or more records.
  *
@@ -204,6 +206,24 @@ Query.prototype.create = function(data, fn){
 
 Query.prototype.update = function(data, fn){
   return this.action('update', data).exec(fn);
+}
+
+// XXX
+
+Query.prototype.first = function(fn){
+  this.limit(1).action('find').exec(function(err, records){
+    if (err) return fn(err);
+    fn(err, records[0]);
+  });
+}
+
+// XXX: default sorting param
+
+Query.prototype.last = function(fn){
+  this.limit(1).action('find').exec(function(err, records){
+    if (err) return fn(err);
+    fn(err, records[0]);
+  });
 }
 
 /**
