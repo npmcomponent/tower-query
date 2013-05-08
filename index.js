@@ -257,6 +257,10 @@ Query.prototype.last = function(fn){
   });
 }
 
+Query.prototype.limit = function(val){
+  return this.push('limit', val);
+}
+
 /**
  * Sort ascending by `key`.
  *
