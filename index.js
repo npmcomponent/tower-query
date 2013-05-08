@@ -85,10 +85,10 @@ function Query(name, criteria) {
   this.name = name;
   this.criteria = criteria || [];
   this.constraints = [];
-  // this.sorts = []; // `sorting`?
   // this.starts = []
   this.selects = [];
-  // this.selects = this.returns = []
+  this.sorting = [];
+  this.paging = {};
 }
 
 /**
@@ -280,7 +280,8 @@ Query.prototype.last = function(fn){
 }
 
 Query.prototype.limit = function(val){
-  return this.push('limit', val);
+  this.paging.limit = val;
+  return this;
 }
 
 /**
@@ -327,7 +328,8 @@ Query.prototype.returns = function(key){
 
 Query.prototype.select = function(key){
   this._start = this._start || key;
-  return this.push('select', queryAttr(key, this._start));
+  this.selects.push(queryAttr(key, this._start));
+  return this;
 }
 
 /**
@@ -356,9 +358,8 @@ Query.prototype.relation = function(dir, key){
  */
 
 Query.prototype.constraint = function(key, op, val){
-  // this.constraints.push(new Constraint(key, op, val, this._start));
-  // return this;
-  return this.push('constraint', new Constraint(key, op, val, this._start));
+  this.constraints.push(new Constraint(key, op, val, this._start));
+  return this;
 }
 
 /**
@@ -375,9 +376,9 @@ Query.prototype.constraint = function(key, op, val){
  */
 
 Query.prototype.action = function(type, data){
-  // this.type = type
-  // this.data = data;
-  return this.push('action', { type: type, data: data ? isArray(data) ? data : [data] : undefined });
+  this.type = type
+  this.data = data ? isArray(data) ? data : [data] : undefined;
+  return this;
 }
 
 // XXX: only do if it decreases final file size
@@ -394,7 +395,8 @@ Query.prototype.action = function(type, data){
 Query.prototype.sort = function(key, dir){
   var attr = queryAttr(key, this._start);
   attr.direction = key;
-  return this.push('sort', attr);
+  this.sorting.push(attr);
+  return this;
 }
 
 /**

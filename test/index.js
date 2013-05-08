@@ -88,7 +88,7 @@ describe('query', function(){
         .action('find');
 
     adapter('example').exec = function(query, fn){
-      assert(1 === query.criteria.length);
+      assert(1 === query.selects.length);
       fn();
     }
 
