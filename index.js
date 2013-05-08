@@ -84,6 +84,11 @@ exports.use = function(adapter){
 function Query(name, criteria) {
   this.name = name;
   this.criteria = criteria || [];
+  this.constraints = [];
+  // this.sorts = []; // `sorting`?
+  // this.starts = []
+  this.selects = [];
+  // this.selects = this.returns = []
 }
 
 /**
@@ -133,6 +138,9 @@ Query.prototype.where = function(key){
 Query.prototype.query = function(name) {
   return query(name);
 }
+
+Query.prototype.page;
+Query.prototype.offset;
 
 /**
  * In a graph database, the data pointing _to_ this node.
@@ -348,6 +356,8 @@ Query.prototype.relation = function(dir, key){
  */
 
 Query.prototype.constraint = function(key, op, val){
+  // this.constraints.push(new Constraint(key, op, val, this._start));
+  // return this;
   return this.push('constraint', new Constraint(key, op, val, this._start));
 }
 
@@ -365,6 +375,8 @@ Query.prototype.constraint = function(key, op, val){
  */
 
 Query.prototype.action = function(type, data){
+  // this.type = type
+  // this.data = data;
   return this.push('action', { type: type, data: data ? isArray(data) ? data : [data] : undefined });
 }
 

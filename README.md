@@ -50,6 +50,12 @@ of the information needed to assess their relationship.
 - [G-SPARQL: A Hybrid Engine for Querying Large Attributed Graphs](http://research.microsoft.com/pubs/157417/GSPARQL.pdf)
 - [Query Languages for Graph Databases](http://users.dcc.uchile.cl/~pbarcelo/wood.pdf)
 - http://www.cs.wayne.edu/~shiyong/papers/scc11a.pdf
+- http://en.wikipedia.org/wiki/SQL
+
+### Queries
+
+- http://blog.neo4j.org/2013/01/demining-join-bomb-with-graph-queries.html
+- http://stackoverflow.com/questions/13792601/how-to-change-complex-cypher-queries-to-simple-query-in-neo4j
 
 ## License
 
