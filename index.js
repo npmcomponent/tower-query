@@ -142,8 +142,21 @@ Query.prototype.query = function(name) {
   return query(name);
 }
 
-Query.prototype.page;
-Query.prototype.offset;
+/**
+ * Specify the page number.
+ *
+ * Use in combination with `limit` for calculating `offset`.
+ */
+
+Query.prototype.page = function(val){
+  this.paging.page = val;
+  return this;
+}
+
+Query.prototype.offset = function(val){
+  this.paging.offset = val;
+  return this;
+}
 
 /**
  * In a graph database, the data pointing _to_ this node.
@@ -196,7 +209,9 @@ Query.prototype.outgoing = function(key){
  */
 
 Query.prototype.as = function(key){
-  return this.push('as', key);
+  // XXX: todo
+  this.selects[this.selects.length - 1].alias = key;
+  return this;
 }
 
 /**
@@ -403,34 +418,6 @@ Query.prototype.sort = function(key, dir){
   var attr = queryAttr(key, this._start);
   attr.direction = key;
   this.sorting.push(attr);
-  return this;
-}
-
-/**
- * Push criterion onto query.
- * 
- * @api private
- */
-
-Query.prototype.push = function(type, data){
-  this.criteria.push([type, data]);
-  return this;
-}
-
-/**
- * Get the number of criteria in the query.
- */
-
-Query.prototype.size = function(){
-  return this.criteria.length;
-}
-
-/**
- * Reset all criteria.
- */
-
-Query.prototype.reset = function(){
-  this.criteria = [];
   return this;
 }
 
