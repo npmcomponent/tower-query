@@ -2,19 +2,19 @@
 
 ## Installation
 
-node:
+node.js:
 
-```
-npm install tower-query
+```bash
+$ npm install tower-query
 ```
 
 browser:
 
-```
-component install tower/query
+```bash
+$ component install tower/query
 ```
 
-## Example
+## Examples
 
 Select records:
 
