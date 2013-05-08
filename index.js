@@ -291,7 +291,7 @@ Query.prototype.limit = function(val){
  */
 
 Query.prototype.asc = function(key){
-  return this.order(1, key);
+  return this.sort(key, 1);
 }
 
 /**
@@ -310,7 +310,7 @@ Query.prototype.asc = function(key){
  */
 
 Query.prototype.desc = function(key){
-  return this.order(-1, key);
+  return this.sort(key, -1);
 }
 
 Query.prototype.returns = function(key){
@@ -374,15 +374,15 @@ Query.prototype.action = function(type, data){
 /**
  * Pushes a sort direction onto the query.
  *
- * @param {Integer} dir   Direction it should point (-1, 1, 0).
  * @param {String}  key   The property to sort on.
+ * @param {Integer} dir   Direction it should point (-1, 1, 0).
  * @api private
  */
 
-Query.prototype.order = function(dir, key){
+Query.prototype.sort = function(key, dir){
   var attr = queryAttr(key, this._start);
   attr.direction = key;
-  return this.push('order', attr);
+  return this.push('sort', attr);
 }
 
 /**
