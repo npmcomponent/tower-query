@@ -12,6 +12,7 @@
     "nosql"
   ],
   "dependencies": {
+    "tower/validator": "*",
     "part/each-array": "*",
     "part/is-array": "*"
   },

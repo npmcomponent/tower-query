@@ -1,4 +1,5 @@
 var query = require('..')
+  , Constraint = query.Constraint
   , stream = require('tower-stream')
   , adapter = require('tower-adapter')
   , assert = require('assert');
@@ -127,4 +128,44 @@ describe('query', function(){
         done();
       });
   });
+
+  describe('filter', function(){
+    it('should filter', function(){
+      var records = [
+          { title: 'foo', x: 10 }
+        , { title: 'bar', x: 15 }
+        , { title: 'baz', x: 20 }
+        , { title: 'box', x: 25 }
+      ];
+
+      var constraints = [
+          new Constraint('x', 'gt', 10)
+        , new Constraint('title', 'match', /ba/)
+      ];
+
+      var result = query.filter(records, constraints);
+      assert(2 === result.length);
+      assert.deepEqual(records[1], result[0]);
+      assert.deepEqual(records[2], result[1]);
+    });
+  });
+
+  describe('constraints', function(){
+    it('should validate', function(){
+      var constraint = new Constraint('count', 'gte', 12);
+      assert(false === query.validate({ count: 10 }, [constraint]));
+    });
+
+    it('should validate `in` array', function(){
+      assert(true === query.validate({ x: 2 }, [new Constraint('x', 'in', [1, 2, 3])]));
+      assert(false === query.validate({ x: 7 }, [new Constraint('x', 'in', [1, 2, 3])]));
+      // XXX: any other cases?
+    });
+
+    it('should validate `nin` array', function(){
+      assert(false === query.validate({ x: 2 }, [new Constraint('x', 'nin', [1, 2, 3])]));
+      assert(true === query.validate({ x: 7 }, [new Constraint('x', 'nin', [1, 2, 3])]));
+      // XXX: any other cases?
+    });
+  })
 });

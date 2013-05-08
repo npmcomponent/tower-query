@@ -6,7 +6,9 @@
 var each = require('part-each-array')
   , isArray = require('part-is-array')
   , Constraint = require('./lib/constraint')
-  , validate = require('./lib/validate');
+  , validate = require('./lib/validate')
+  , validateConstraints = require('./lib/validate-constraints')
+  , filter = require('./lib/filter');
 
 /**
  * Expose `query`.
@@ -49,6 +51,18 @@ exports.collection = {};
  */
 
 exports.adapters = [];
+
+/**
+ * Expose `filter`.
+ */
+
+exports.filter = filter;
+
+/**
+ * Validate query constraints.
+ */
+
+exports.validate = validateConstraints;
 
 /**
  * Make an adapter queryable.
