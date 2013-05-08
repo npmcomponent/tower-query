@@ -107,11 +107,17 @@ describe('query', function(){
   });
 
   it('should validate a query', function(done){
-    stream('foo.find')
-      .param('bar', 'string')
-        .validate('in', [ 'a', 'b' ]);
+    // XXX: constraints are defaulting to 'memory'
+    //      instead of `exports.adapters[0]`.
+    // adapter('example')
+    adapter('memory')
+      .model('foo')
+        .action('find')
+          .param('bar', 'string')
+            .validate('in', [ 'a', 'b' ]);
 
     query()
+      .use('memory')
       .select('foo')
       .where('bar').eq('x')
       .action('find')

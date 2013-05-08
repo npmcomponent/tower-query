@@ -101,7 +101,7 @@ Query.prototype.use = function(name){
  */
 
 Query.prototype.start = function(key, val){
-  this.start = key;
+  this._start = key;
   return this.push('start', queryModel(key));
 }
 
@@ -300,8 +300,8 @@ Query.prototype.returns = function(key){
 }
 
 Query.prototype.select = function(key){
-  this.start = this.start || key;
-  return this.push('select', queryAttr(key, this.start));
+  this._start = this._start || key;
+  return this.push('select', queryAttr(key, this._start));
 }
 
 /**
@@ -313,7 +313,7 @@ Query.prototype.select = function(key){
  */
 
 Query.prototype.relation = function(dir, key){
-  var attr = queryAttr(key, this.start);
+  var attr = queryAttr(key, this._start);
   attr.direction = dir;
   return this.push('relation', attr);
 }
@@ -330,7 +330,7 @@ Query.prototype.relation = function(dir, key){
  */
 
 Query.prototype.constraint = function(key, op, val){
-  return this.push('constraint', new Constraint(key, op, val, this.start));
+  return this.push('constraint', new Constraint(key, op, val, this._start));
 }
 
 /**
@@ -362,7 +362,7 @@ Query.prototype.action = function(type, data){
  */
 
 Query.prototype.order = function(dir, key){
-  var attr = queryAttr(key, this.start);
+  var attr = queryAttr(key, this._start);
   attr.direction = key;
   return this.push('order', attr);
 }
@@ -419,7 +419,7 @@ Query.prototype.clone = function(){
  */
 
 Query.prototype.exec = function(fn){
-  this.context = this.start = undefined;
+  this.context = this._start = undefined;
   var adapter = this.adapters && this.adapters[0] || exports.adapters[0];
   this.validate(function(){});
   if (this.errors && this.errors.length) return fn(this.errors);
@@ -428,7 +428,7 @@ Query.prototype.exec = function(fn){
 
 Query.prototype.validate = function(fn){
   var adapter = this.adapters && this.adapters[0] || exports.adapters[0];
-  validate(this, adapter, function(){});
+  validate(this, adapter, fn);
 }
 
 function queryModel(key) {
