@@ -16,8 +16,9 @@
     "part/is-array": "*"
   },
   "scripts": [
-    "index.js"
-    , "lib/constraint.js"
+    "index.js",
+    "lib/constraint.js",
+    "lib/validate.js",
   ],
   "license": "MIT"
 }
