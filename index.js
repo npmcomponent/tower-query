@@ -126,34 +126,21 @@ Query.prototype.start = function(key, val){
   return this;
 }
 
+// XXX: http://docs.neo4j.org/chunked/stable/query-return.html
+
+Query.prototype.returns = function(key){
+  this.selects.push(queryAttr(key, this._start));
+  return this;
+}
+
+Query.prototype.select = function(key){
+  this._start = this._start || key;
+  this.selects.push(queryAttr(key, this._start));
+  return this;
+}
+
 Query.prototype.where = function(key){
   this.context = key;
-  return this;
-}
-
-/**
- * Define another query on the parent scope.
- *
- * XXX: wire this up with the model (for todomvc).
- */
-
-Query.prototype.query = function(name) {
-  return query(name);
-}
-
-/**
- * Specify the page number.
- *
- * Use in combination with `limit` for calculating `offset`.
- */
-
-Query.prototype.page = function(val){
-  this.paging.page = val;
-  return this;
-}
-
-Query.prototype.offset = function(val){
-  this.paging.offset = val;
   return this;
 }
 
@@ -302,6 +289,22 @@ Query.prototype.limit = function(val){
 }
 
 /**
+ * Specify the page number.
+ *
+ * Use in combination with `limit` for calculating `offset`.
+ */
+
+Query.prototype.page = function(val){
+  this.paging.page = val;
+  return this;
+}
+
+Query.prototype.offset = function(val){
+  this.paging.offset = val;
+  return this;
+}
+
+/**
  * Sort ascending by `key`.
  *
  * If the key is a property name, it will
@@ -337,19 +340,6 @@ Query.prototype.asc = function(key){
 
 Query.prototype.desc = function(key){
   return this.sort(key, -1);
-}
-
-// XXX: http://docs.neo4j.org/chunked/stable/query-return.html
-
-Query.prototype.returns = function(key){
-  this.selects.push(queryAttr(key, this._start));
-  return this;
-}
-
-Query.prototype.select = function(key){
-  this._start = this._start || key;
-  this.selects.push(queryAttr(key, this._start));
-  return this;
 }
 
 /**
@@ -454,6 +444,16 @@ Query.prototype.exec = function(fn){
 Query.prototype.validate = function(fn){
   var adapter = this.adapters && this.adapters[0] || exports.adapters[0];
   validate(this, adapter, fn);
+}
+
+/**
+ * Define another query on the parent scope.
+ *
+ * XXX: wire this up with the model (for todomvc).
+ */
+
+Query.prototype.query = function(name) {
+  return query(name);
 }
 
 function queryModel(key) {
