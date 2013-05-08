@@ -18,7 +18,7 @@
   "scripts": [
     "index.js",
     "lib/constraint.js",
-    "lib/validate.js",
+    "lib/validate.js"
   ],
   "license": "MIT"
 }
