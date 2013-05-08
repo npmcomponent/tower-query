@@ -84,12 +84,13 @@ exports.use = function(adapter){
 function Query(name) {
   this.name = name;
   this.constraints = [];
-  // this.starts = []
   this.selects = [];
   this.sorting = [];
   this.paging = {};
   // XXX: accomplish both joins and graph traversals.
   this.relations = [];
+  // this.starts = []
+  // this.groupings = {}
 }
 
 /**
