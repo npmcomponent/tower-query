@@ -5,7 +5,8 @@
 
 var each = require('part-each-array')
   , isArray = require('part-is-array')
-  , Constraint = require('./lib/constraint');
+  , Constraint = require('./lib/constraint')
+  , validate = require('./lib/validate');
 
 /**
  * Expose `query`.
@@ -30,27 +31,37 @@ exports.Constraint = Constraint;
  */
 
 function query(name) {
-  // lazy-load optimizer if none injected.
-  exports.optimizer || (exports.optimizer = require('tower-query-optimizer'));
-
   return null == name
     ? new Query
-    : queries[name]
-      ? queries[name].clone()
-      : (queries[name] = new Query(name));
+    : exports.collection[name]
+      ? exports.collection[name].clone()
+      : (exports.collection[name] = new Query(name));
 }
 
 /**
  * Named queries.
  */
 
-var queries = exports.queries = {};
+exports.collection = {};
 
 /**
- * Hook for custom optimizer.
+ * Queryable adapters.
  */
 
-exports.optimizer = undefined;
+exports.adapters = [];
+
+/**
+ * Make an adapter queryable.
+ *
+ * XXX: The main reason for doing it this way
+ *      is to not create circular dependencies.
+ */
+
+exports.use = function(adapter){
+  exports.adapters[adapter.name] = adapter;
+  exports.adapters.push(adapter);
+  return exports;
+}
 
 /**
  * Construct a new `Query` instance.
@@ -59,6 +70,26 @@ exports.optimizer = undefined;
 function Query(name, criteria) {
   this.name = name;
   this.criteria = criteria || [];
+}
+
+/**
+ * Explicitly tell the query what adapters to use.
+ *
+ * If not specified, it will do its best to find
+ * the adapter. If one or more are specified, the
+ * first specified will be the default, and its namespace
+ * can be left out of the models used in the query
+ * (e.g. `user` vs. `facebook.user` if `query().use('facebook').select('user')`).
+ *
+ * @param {Mixed} name Name of the adapter, or the adapter object itself.
+ *   In `package.json`, maybe this is under a `"key": "memory"` property.
+ * @return {this}
+ */
+
+Query.prototype.use = function(name){
+  (this.adapters || (this.adapters = []))
+    .push('string' === typeof name ? exports.adapters[name] : name);
+  return this;
 }
 
 /**
@@ -365,39 +396,6 @@ Query.prototype.reset = function(){
 }
 
 /**
- * XXX: For now, only one query per adapter.
- *      Later, you can query across multiple adapters
- *
- * @see http://en.wikipedia.org/wiki/Query_optimizer
- * @see http://en.wikipedia.org/wiki/Query_plan
- * @see http://homepages.inf.ed.ac.uk/libkin/teach/dbs12/set5.pdf
- */
-
-Query.prototype.exec = function(fn){
-  this.context = this.start = undefined;
-  return exports.optimizer(this, fn);
-}
-
-/**
- * Explicitly tell the query what adapters to use.
- *
- * If not specified, it will do its best to find
- * the adapter. If one or more are specified, the
- * first specified will be the default, and its namespace
- * can be left out of the models used in the query
- * (e.g. `user` vs. `facebook.user` if `query().use('facebook').select('user')`).
- *
- * @param {String} name Name of the adapter.
- *   In `package.json`, maybe this is under a `"key": "memory"` property.
- * @return {this}
- */
-
-Query.prototype.use = function(name){
-  (this.adapters || (this.adapters = [])).push(name);
-  return this;
-}
-
-/**
  * A way to log the query criteria,
  * so you can see if the adapter supports it.
  */
@@ -409,6 +407,28 @@ Query.prototype.explain = function(fn){
 
 Query.prototype.clone = function(){
   return new Query(this.name, this.criteria.concat());
+}
+
+/**
+ * XXX: For now, only one query per adapter.
+ *      Later, you can query across multiple adapters
+ *
+ * @see http://en.wikipedia.org/wiki/Query_optimizer
+ * @see http://en.wikipedia.org/wiki/Query_plan
+ * @see http://homepages.inf.ed.ac.uk/libkin/teach/dbs12/set5.pdf
+ */
+
+Query.prototype.exec = function(fn){
+  this.context = this.start = undefined;
+  var adapter = this.adapters && this.adapters[0] || exports.adapters[0];
+  this.validate(function(){});
+  if (this.errors && this.errors.length) return fn(this.errors);
+  return adapter.exec(this, fn);
+}
+
+Query.prototype.validate = function(fn){
+  var adapter = this.adapters && this.adapters[0] || exports.adapters[0];
+  validate(this, adapter, function(){});
 }
 
 function queryModel(key) {

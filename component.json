@@ -13,9 +13,11 @@
   ],
   "dependencies": {
     "part/each-array": "*",
-    "part/is-array": "*",
-    "tower/query-optimizer": "*"
+    "part/is-array": "*"
   },
-  "scripts": ["index.js", "lib/constraint.js"],
+  "scripts": [
+    "index.js"
+    , "lib/constraint.js"
+  ],
   "license": "MIT"
 }

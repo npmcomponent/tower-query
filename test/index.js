@@ -49,8 +49,7 @@ describe('query', function(){
       .where('facebook.user.username', 'twitter.user.username')
       // twitter.user -> reduced(user)
       .where('user.firstName', 'twitter.user.firstName')
-      .returns('user')
-      .topology();
+      .returns('user');
 
     // 6: [user, facebook.user, twitter.user, constraints(user), constriants(facebook.user)]
     // assert(6 === topology.size())
@@ -87,78 +86,17 @@ describe('query', function(){
       .model('user')
         .action('find');
 
-    adapter('example').exec = function(criteria, fn){
-      assert(1 === criteria.length);
+    adapter('example').exec = function(query, fn){
+      assert(1 === query.criteria.length);
       fn();
     }
 
-    var topology = query()
+    query()
       .use('example')
       .select('user')
       .exec(function(){
         done();
       });
-  });
-
-  it('should compile criteria to a topology', function(done){
-    var users = [
-        { name: 'first', likeCount: 20 }
-      , { name: 'second', likeCount: 10 }
-      , { name: 'third', likeCount: 8 }
-      , { name: 'fourth', likeCount: 300 }
-    ];
-
-    stream('user.find')
-      .on('exec', function(context, data, fn){
-        var matches = [];
-
-        users.forEach(function(user){
-          var success = true;
-
-          context.constraints.forEach(function(constraint){
-            // XXX: operators
-            if (success) {
-              switch (constraint[1].operator) {
-                case 'gte':
-                  success = user[constraint[1].left.attr] >= constraint[1].right.value;
-                  break;
-                case 'lt':
-                  success = user[constraint[1].left.attr] < constraint[1].right.value;
-                  break;
-              }
-            }
-            
-            if (!success) return false;
-          });
-
-          if (!success) return false;
-
-          matches.push(user);
-        });
-
-        context.emit('data', matches);
-        context.close();
-      });
-
-    var topology = query()
-      .start('user')
-      .where('likeCount')
-        .gte(10)
-        .lt(20)
-      .topology();
-
-    var result;
-
-    topology
-      .on('data', function(data){
-        result = data;
-      })
-      .on('close', function(){
-        assert(1 === result.length);
-        assert('second' === result[0].name)
-        done();
-      })
-      .exec();
   });
 
   it('should save named queries', function(){

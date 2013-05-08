@@ -4,7 +4,6 @@
   "main": "./index.js",
   "dependencies": {
     "part-each-array": "*",
-    "part-is-array": "*",
-    "tower-query-optimizer": "*"
+    "part-is-array": "*"
   }
 }
