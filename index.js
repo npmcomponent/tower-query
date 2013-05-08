@@ -81,9 +81,8 @@ exports.use = function(adapter){
  * Construct a new `Query` instance.
  */
 
-function Query(name, criteria) {
+function Query(name) {
   this.name = name;
-  this.criteria = criteria || [];
   this.constraints = [];
   // this.starts = []
   this.selects = [];
@@ -432,7 +431,7 @@ Query.prototype.explain = function(fn){
 }
 
 Query.prototype.clone = function(){
-  return new Query(this.name, this.criteria.concat());
+  return new Query(this.name);
 }
 
 /**
