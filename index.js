@@ -89,6 +89,8 @@ function Query(name, criteria) {
   this.selects = [];
   this.sorting = [];
   this.paging = {};
+  // XXX: accomplish both joins and graph traversals.
+  this.relations = [];
 }
 
 /**
@@ -121,7 +123,8 @@ Query.prototype.use = function(name){
 
 Query.prototype.start = function(key, val){
   this._start = key;
-  return this.push('start', queryModel(key));
+  (this.starts || (this.starts = [])).push(queryModel(key));
+  return this;
 }
 
 Query.prototype.where = function(key){
@@ -322,8 +325,11 @@ Query.prototype.desc = function(key){
   return this.sort(key, -1);
 }
 
+// XXX: http://docs.neo4j.org/chunked/stable/query-return.html
+
 Query.prototype.returns = function(key){
-  return this.push('return', key);
+  this.selects.push(queryAttr(key, this._start));
+  return this;
 }
 
 Query.prototype.select = function(key){
@@ -343,7 +349,8 @@ Query.prototype.select = function(key){
 Query.prototype.relation = function(dir, key){
   var attr = queryAttr(key, this._start);
   attr.direction = dir;
-  return this.push('relation', attr);
+  this.relations.push(attr);
+  return this;
 }
 
 /**
