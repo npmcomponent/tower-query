@@ -3,12 +3,12 @@
  * Module dependencies.
  */
 
-var each = require('part-each-array')
-  , isArray = require('part-is-array')
-  , Constraint = require('./lib/constraint')
-  , validate = require('./lib/validate')
-  , validateConstraints = require('./lib/validate-constraints')
-  , filter = require('./lib/filter');
+var each = require('part-each-array');
+var isArray = require('part-is-array');
+var Constraint = require('./lib/constraint');
+var validate = require('./lib/validate');
+var validateConstraints = require('./lib/validate-constraints');
+var filter = require('./lib/filter');
 
 /**
  * Expose `query`.
@@ -75,7 +75,7 @@ exports.use = function(adapter){
   exports.adapters[adapter.name] = adapter;
   exports.adapters.push(adapter);
   return exports;
-}
+};
 
 /**
  * Construct a new `Query` instance.
@@ -111,7 +111,7 @@ Query.prototype.use = function(name){
   (this.adapters || (this.adapters = []))
     .push('string' === typeof name ? exports.adapters[name] : name);
   return this;
-}
+};
 
 /**
  * The starting table or record for the query.
@@ -125,25 +125,25 @@ Query.prototype.start = function(key, val){
   this._start = key;
   (this.starts || (this.starts = [])).push(queryModel(key));
   return this;
-}
+};
 
 // XXX: http://docs.neo4j.org/chunked/stable/query-return.html
 
 Query.prototype.returns = function(key){
   this.selects.push(queryAttr(key, this._start));
   return this;
-}
+};
 
 Query.prototype.select = function(key){
   this._start = this._start || key;
   this.selects.push(queryAttr(key, this._start));
   return this;
-}
+};
 
 Query.prototype.where = function(key){
   this.context = key;
   return this;
-}
+};
 
 /**
  * In a graph database, the data pointing _to_ this node.
@@ -162,7 +162,7 @@ Query.prototype.where = function(key){
 
 Query.prototype.incoming = function(key){
   return this.relation('incoming', key);
-}
+};
 
 /**
  * In a graph database, the data pointing _from_ this node.
@@ -181,7 +181,7 @@ Query.prototype.incoming = function(key){
 
 Query.prototype.outgoing = function(key){
   return this.relation('outgoing', key);
-}
+};
 
 /**
  * What the variable should be called for the data returned.
@@ -199,7 +199,7 @@ Query.prototype.as = function(key){
   // XXX: todo
   this.selects[this.selects.length - 1].alias = key;
   return this;
-}
+};
 
 /**
  * Append constraint to query.
@@ -221,7 +221,7 @@ each(['eq', 'neq', 'gte', 'gt', 'lte', 'lt', 'nin', 'match'], function(operator)
 
 Query.prototype.contains = function(val){
   return this.constraint(this.context, 'in', val);
-}
+};
 
 /**
  * Append action to query, then execute.
@@ -260,11 +260,11 @@ Query.prototype.all = Query.prototype.find;
 
 Query.prototype.create = function(data, fn){
   return this.action('create', data).exec(fn);
-}
+};
 
 Query.prototype.update = function(data, fn){
   return this.action('update', data).exec(fn);
-}
+};
 
 // XXX
 
@@ -273,7 +273,7 @@ Query.prototype.first = function(fn){
     if (err) return fn(err);
     fn(err, records[0]);
   });
-}
+};
 
 // XXX: default sorting param
 
@@ -282,12 +282,12 @@ Query.prototype.last = function(fn){
     if (err) return fn(err);
     fn(err, records[0]);
   });
-}
+};
 
 Query.prototype.limit = function(val){
   this.paging.limit = val;
   return this;
-}
+};
 
 /**
  * Specify the page number.
@@ -298,12 +298,12 @@ Query.prototype.limit = function(val){
 Query.prototype.page = function(val){
   this.paging.page = val;
   return this;
-}
+};
 
 Query.prototype.offset = function(val){
   this.paging.offset = val;
   return this;
-}
+};
 
 /**
  * Sort ascending by `key`.
@@ -322,7 +322,7 @@ Query.prototype.offset = function(val){
 
 Query.prototype.asc = function(key){
   return this.sort(key, 1);
-}
+};
 
 /**
  * Sort descending by `key`.
@@ -341,7 +341,7 @@ Query.prototype.asc = function(key){
 
 Query.prototype.desc = function(key){
   return this.sort(key, -1);
-}
+};
 
 /**
  * Pushes a `"relation"` onto the query.
@@ -356,7 +356,7 @@ Query.prototype.relation = function(dir, key){
   attr.direction = dir;
   this.relations.push(attr);
   return this;
-}
+};
 
 /**
  * Pushes a `"constraint"` onto the query.
@@ -372,7 +372,7 @@ Query.prototype.relation = function(dir, key){
 Query.prototype.constraint = function(key, op, val){
   this.constraints.push(new Constraint(key, op, val, this._start));
   return this;
-}
+};
 
 /**
  * Pushes an `"action"` onto the query.
@@ -391,7 +391,7 @@ Query.prototype.action = function(type, data){
   this.type = type
   this.data = data ? isArray(data) ? data : [data] : undefined;
   return this;
-}
+};
 
 // XXX: only do if it decreases final file size
 // each(['find', 'create', 'update', 'delete'])
@@ -409,7 +409,7 @@ Query.prototype.sort = function(key, dir){
   attr.direction = key;
   this.sorting.push(attr);
   return this;
-}
+};
 
 /**
  * A way to log the query criteria,
@@ -419,11 +419,11 @@ Query.prototype.sort = function(key, dir){
 Query.prototype.explain = function(fn){
   this._explain = fn;
   return this;
-}
+};
 
 Query.prototype.clone = function(){
   return new Query(this.name);
-}
+};
 
 /**
  * XXX: For now, only one query per adapter.
@@ -440,12 +440,12 @@ Query.prototype.exec = function(fn){
   this.validate(function(){});
   if (this.errors && this.errors.length) return fn(this.errors);
   return adapter.exec(this, fn);
-}
+};
 
 Query.prototype.validate = function(fn){
   var adapter = this.adapters && this.adapters[0] || exports.adapters[0];
   validate(this, adapter, fn);
-}
+};
 
 /**
  * Define another query on the parent scope.
@@ -455,7 +455,7 @@ Query.prototype.validate = function(fn){
 
 Query.prototype.query = function(name) {
   return query(name);
-}
+};
 
 function queryModel(key) {
   key = key.split('.');
