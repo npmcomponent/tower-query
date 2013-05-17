@@ -439,6 +439,7 @@ Query.prototype.exec = function(fn){
   var adapter = this.adapters && this.adapters[0] || exports.adapters[0];
   this.validate(function(){});
   if (this.errors && this.errors.length) return fn(this.errors);
+  if (!this.selects[0]) throw new Error('Must `.select(modelName)`');
   return adapter.exec(this, fn);
 };
 
