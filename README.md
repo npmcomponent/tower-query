@@ -1,5 +1,7 @@
 # Tower Query API
 
+Query anything, anywhere.
+
 ## Installation
 
 node.js:
