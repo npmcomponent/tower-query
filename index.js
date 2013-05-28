@@ -449,6 +449,13 @@ Query.prototype.validate = function(fn){
   validate(this, adapter, fn);
 };
 
+Query.prototype.subscribe = function(fn){
+  var self = this;
+  subscriber.output(this.type, function(record){
+    if (self.test(record)) fn(record);
+  });
+};
+
 /**
  * Define another query on the parent scope.
  *
