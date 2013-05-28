@@ -11,10 +11,10 @@ describe('query', function(){
       .select('user')
       .select('facebook.user')
       .select('twitter.user')
-      // random constraints purely on the models
+      // random constraints purely on the resources
       .where('user.likeCount').gte(10)
       .where('facebook.likeCount').gte(20)
-      // constraints between models
+      // constraints between resources
       // .on('exec', function(context) { context.tests[user.id] = context.constraints.length })
       // if (context.tests[user.id] === 0)
       //    it passed all the constraints! it's been reduced!
@@ -61,7 +61,7 @@ describe('query', function(){
 
   it('should execute adapter', function(done){
     adapter('example')
-      .model('user')
+      .resource('user')
         .action('find');
 
     adapter('example').exec = function(query, fn){
@@ -89,7 +89,7 @@ describe('query', function(){
     //      instead of `exports.adapters[0]`.
     // adapter('example')
     adapter('memory')
-      .model('foo')
+      .resource('foo')
         .action('find')
           .param('bar', 'string')
             .validate('in', [ 'a', 'b' ]);
@@ -144,5 +144,17 @@ describe('query', function(){
       assert(true === query.validate({ x: 7 }, [new Constraint('x', 'nin', [1, 2, 3])]));
       // XXX: any other cases?
     });
-  })
+  });
+
+  describe('subscriber', function(){
+    it('should subscribe', function(done){
+      return done();
+      query().subscribe(function(){
+        console.log('here')
+        done();
+      });
+    });
+
+    it('should unsubscribe');
+  });
 });

@@ -100,7 +100,7 @@ function Query(name) {
  * If not specified, it will do its best to find
  * the adapter. If one or more are specified, the
  * first specified will be the default, and its namespace
- * can be left out of the models used in the query
+ * can be left out of the resources used in the query
  * (e.g. `user` vs. `facebook.user` if `query().use('facebook').select('user')`).
  *
  * @param {Mixed} name Name of the adapter, or the adapter object itself.
@@ -440,7 +440,7 @@ Query.prototype.exec = function(fn){
   var adapter = this.adapters && this.adapters[0] || exports.adapters[0];
   this.validate(function(){});
   if (this.errors && this.errors.length) return fn(this.errors);
-  if (!this.selects[0]) throw new Error('Must `.select(modelName)`');
+  if (!this.selects[0]) throw new Error('Must `.select(resourceName)`');
   return adapter.exec(this, fn);
 };
 
@@ -459,7 +459,7 @@ Query.prototype.subscribe = function(fn){
 /**
  * Define another query on the parent scope.
  *
- * XXX: wire this up with the model (for todomvc).
+ * XXX: wire this up with the resource (for todomvc).
  */
 
 Query.prototype.query = function(name) {
@@ -470,9 +470,9 @@ function queryModel(key) {
   key = key.split('.');
 
   if (2 === key.length)
-    return { adapter: key[0], model: key[1], ns: key[0] + '.' + key[1] };
+    return { adapter: key[0], resource: key[1], ns: key[0] + '.' + key[1] };
   else
-    return { model: key[0], ns: key[0] }; // XXX: adapter: adapter.default()
+    return { resource: key[0], ns: key[0] }; // XXX: adapter: adapter.default()
 }
 
 /**
@@ -487,21 +487,21 @@ function queryAttr(val, start){
   switch (val.length) {
     case 3:
       variable.adapter = val[0];
-      variable.model = val[1];
+      variable.resource = val[1];
       variable.attr = val[2];
-      variable.ns = variable.adapter + '.' + variable.model;
+      variable.ns = variable.adapter + '.' + variable.resource;
       break;
     case 2:
       variable.adapter = 'memory'; // XXX: adapter.default();
-      variable.model = val[0];
+      variable.resource = val[0];
       variable.attr = val[1];
-      variable.ns = variable.model;
+      variable.ns = variable.resource;
       break;
     case 1:
       variable.adapter = 'memory'; // XXX: adapter.default();
-      variable.model = start;
+      variable.resource = start;
       variable.attr = val[0];
-      variable.ns = variable.model;
+      variable.ns = variable.resource;
       break;
   }
 
