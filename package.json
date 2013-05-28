@@ -4,6 +4,7 @@
   "main": "./index.js",
   "dependencies": {
     "tower-validator": "*",
+    "tower-program": "*",
     "part-each-array": "*",
     "part-is-array": "*"
   }

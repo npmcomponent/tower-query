@@ -9,6 +9,7 @@ var Constraint = require('./lib/constraint');
 var validate = require('./lib/validate');
 var validateConstraints = require('./lib/validate-constraints');
 var filter = require('./lib/filter');
+var subscriber = require('./lib/subscriber');
 
 /**
  * Expose `query`.

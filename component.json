@@ -13,6 +13,7 @@
   ],
   "dependencies": {
     "tower/validator": "*",
+    "tower/program": "*",
     "part/each-array": "*",
     "part/is-array": "*"
   },
@@ -21,7 +22,8 @@
     "lib/constraint.js",
     "lib/validate.js",
     "lib/validate-constraints.js",
-    "lib/filter.js"
+    "lib/filter.js",
+    "lib/subscriber.js"
   ],
   "license": "MIT"
 }
