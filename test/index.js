@@ -1,8 +1,8 @@
-var query = require('..')
-  , Constraint = query.Constraint
-  , stream = require('tower-stream')
-  , adapter = require('tower-adapter')
-  , assert = require('assert');
+var query = require('..');
+var Constraint = query.Constraint;
+var stream = require('tower-stream');
+var adapter = require('tower-adapter');
+var assert = require('assert');
 
 describe('query', function(){
   it('should find minimum-cost maximum-flow', function(){
