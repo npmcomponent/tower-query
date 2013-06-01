@@ -17,6 +17,11 @@
     "part/each-array": "*",
     "part/is-array": "*"
   },
+  "development": {
+    "visionmedia/mocha": "*",
+    "timoxley/assert": "*",
+    "tower/adapter": "*"
+  },
   "scripts": [
     "index.js",
     "lib/constraint.js",

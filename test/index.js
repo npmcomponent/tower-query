@@ -1,8 +1,14 @@
-var query = require('..');
-var Constraint = query.Constraint;
+if ('undefined' === typeof window) {
+  var query = require('..');
+  var assert = require('assert');
+} else {
+  var query = require('tower-query');
+  var assert = require('timoxley-assert');
+}
+
 var stream = require('tower-stream');
 var adapter = require('tower-adapter');
-var assert = require('assert');
+var Constraint = query.Constraint;
 
 describe('query', function(){
   it('should find minimum-cost maximum-flow', function(){
