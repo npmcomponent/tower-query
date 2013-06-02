@@ -1,10 +1,10 @@
 {
   "name": "tower-query",
-  "version": "0.5.0pre",
+  "version": "0.1.0pre",
   "main": "./index.js",
   "dependencies": {
-    "tower-validator": "~0.5.0pre",
-    "tower-program": "~0.5.0pre",
+    "tower-validator": "~0.1.0pre",
+    "tower-program": "~0.1.0pre",
     "part-each-array": "*",
     "part-is-array": "*"
   }
