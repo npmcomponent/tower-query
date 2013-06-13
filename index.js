@@ -31,6 +31,9 @@ exports.Constraint = Constraint;
 
 /**
  * Wrap an array for chaining query criteria.
+ *
+ * @param {String} A query name.
+ * @return {Query} A query.
  */
 
 function query(name) {
@@ -70,6 +73,10 @@ exports.validate = validateConstraints;
  *
  * XXX: The main reason for doing it this way
  *      is to not create circular dependencies.
+ *
+ * @chainable
+ * @param {Adapter} An adapter object.
+ * @return {Function} self.
  */
 
 exports.use = function(adapter){
@@ -79,7 +86,10 @@ exports.use = function(adapter){
 };
 
 /**
- * Construct a new `Query` instance.
+ * Class representing a query.
+ *
+ * @class
+ * @param {String} name A query instance's name.
  */
 
 function Query(name) {
@@ -103,9 +113,10 @@ function Query(name) {
  * can be left out of the resources used in the query
  * (e.g. `user` vs. `facebook.user` if `query().use('facebook').select('user')`).
  *
+ * @chainable
  * @param {Mixed} name Name of the adapter, or the adapter object itself.
  *   In `package.json`, maybe this is under a `"key": "memory"` property.
- * @return {this}
+ * @return {this} self.
  */
 
 Query.prototype.use = function(name){
@@ -117,8 +128,10 @@ Query.prototype.use = function(name){
 /**
  * The starting table or record for the query.
  *
- * @param {String} key
- * @param {Object} [val]
+ * @chainable
+ * @param {String} key The starting table or record name.
+ * @param {Object} val
+ * @return {this} self.
  * @api public
  */
 
@@ -128,19 +141,38 @@ Query.prototype.start = function(key, val){
   return this;
 };
 
-// XXX: http://docs.neo4j.org/chunked/stable/query-return.html
+/**
+ * Add a query pattern to be returned.
+ * XXX: http://docs.neo4j.org/chunked/stable/query-return.html
+ *
+ * @param {String} key A query pattern that you want to be returned.
+ * @return {this} self.
+ */
 
 Query.prototype.returns = function(key){
   this.selects.push(queryAttr(key, this._start));
   return this;
 };
 
+/**
+ * Start a SELECT query.
+ *
+ * @chainable
+ * @param {String} key A record or table name.
+ * @returns {this} self.
+ */
 Query.prototype.select = function(key){
   this._start = this._start || key;
   this.selects.push(queryAttr(key, this._start));
   return this;
 };
 
+/**
+ * Add a WHERE clause.
+ *
+ * @param {String} key A record or table property/column name.
+ * @returns {this} self.
+ */
 Query.prototype.where = function(key){
   this.context = key;
   return this;
@@ -157,7 +189,9 @@ Query.prototype.where = function(key){
  *      .incoming('friends')
  *      .incoming('friends');
  *
- * @param {String} key
+ * @chainable
+ * @param {String} key Name of the data coming to the start node.
+ * @return {this} self.
  * @api public
  */
 
@@ -176,7 +210,9 @@ Query.prototype.incoming = function(key){
  *      .outgoing('friends')
  *      .outgoing('friends');
  *
- * @param {String} key
+ * @chainable
+ * @param {String} key Name of the data going out from the start node.
+ * @return {this} self.
  * @api public
  */
 
@@ -192,7 +228,8 @@ Query.prototype.outgoing = function(key){
  *
  *    query().start('users').as('people');
  *
- * @param {String} key
+ * @param {String} key The data's new variable name.
+ * @return {this} self.
  * @api public
  */
 
@@ -209,8 +246,8 @@ Query.prototype.as = function(key){
  *
  *    query().start('users').where('likeCount').lte(200);
  *
- * @param {String}       key  The property to compare `val` to.
- * @param {Number|Date}  val
+ * @param {String} key  The property to compare `val` to.
+ * @param {Number|Date} val The number or date value.
  * @api public
  */
 
@@ -219,6 +256,14 @@ each(['eq', 'neq', 'gte', 'gt', 'lte', 'lt', 'nin', 'match'], function(operator)
     return this.constraint(this.context, operator, val);
   }
 });
+
+/**
+ * Check if the value exists within a set of values.
+ *
+ * @chainable
+ * @param {Object} val The constraint value.
+ * @returns {this} self.
+ */
 
 Query.prototype.contains = function(val){
   return this.constraint(this.context, 'in', val);
@@ -257,17 +302,54 @@ Query.prototype.all = Query.prototype.find;
  *
  * This is different from the other actions 
  * in that it can take data (records) as arguments.
+ *
+ * Example:
+ *
+ *    query()
+ *      .use('memory')
+ *      .select('post')
+ *      .create({ title: 'Foo' }, function(err, post){
+ *
+ *      });
+ *
+ * @param {Object} data Data record.
+ * @param {Function} fn Function to be executed on record creation.
+ * @return {Mixed} Whatever `fn` returns on the `create` action.
  */
 
 Query.prototype.create = function(data, fn){
   return this.action('create', data).exec(fn);
 };
 
+/**
+ * Update one or more records.
+ *
+ * This is different from the other actions
+ * in that it can take data (records) as arguments.
+ *
+ * Example:
+ *
+ *    query()
+ *      .use('memory')
+ *      .select('post')
+ *      .update({ title: 'Foo' }, function(err, post){
+ *
+ *      });
+ *
+ * @param {Object} data Data record.
+ * @param {Function} Function to be executed on record update.
+ * @return {Mixed} Whatever `fn` returns on the `update` action.
+ */
+
 Query.prototype.update = function(data, fn){
   return this.action('update', data).exec(fn);
 };
 
-// XXX
+/**
+ * Return the first record that matches the query pattern.
+ *
+ * @param {Function} fn Function to execute on records after `find` action finishes.
+ */
 
 Query.prototype.first = function(fn){
   this.limit(1).action('find').exec(function(err, records){
@@ -276,7 +358,11 @@ Query.prototype.first = function(fn){
   });
 };
 
-// XXX: default sorting param
+/**
+ * Return the last record that matches the query pattern.
+ *
+ * @param {Function} fn Function to execute on records after `find` action finishes.
+ */
 
 Query.prototype.last = function(fn){
   this.limit(1).action('find').exec(function(err, records){
@@ -284,6 +370,14 @@ Query.prototype.last = function(fn){
     fn(err, records[0]);
   });
 };
+
+/**
+ * Add a record query LIMIT.
+ *
+ * @chainable
+ * @param {Integer} val The record limit.
+ * @return {this} self.
+ */
 
 Query.prototype.limit = function(val){
   this.paging.limit = val;
@@ -294,6 +388,10 @@ Query.prototype.limit = function(val){
  * Specify the page number.
  *
  * Use in combination with `limit` for calculating `offset`.
+ *
+ * @chainable
+ * @param {Integer} val The page number.
+ * @return {this} self.
  */
 
 Query.prototype.page = function(val){
@@ -301,6 +399,13 @@ Query.prototype.page = function(val){
   return this;
 };
 
+/**
+ * Specify the offset.
+ *
+ * @chainable
+ * @param {Integer} val The offset value.
+ * @return {this} self.
+ */
 Query.prototype.offset = function(val){
   this.paging.offset = val;
   return this;
@@ -317,7 +422,9 @@ Query.prototype.offset = function(val){
  *
  *    query().start('users').asc('createdAt');
  *
- * @param {String} key
+ * @chainable
+ * @param {String} key A property name.
+ * @return {this} self.
  * @api public
  */
 
@@ -336,7 +443,9 @@ Query.prototype.asc = function(key){
  *
  *    query().start('users').desc('createdAt');
  *
- * @param {String} key
+ * @chainable
+ * @param {String} key A property name.
+ * @return {this} self.
  * @api public
  */
 
@@ -347,8 +456,10 @@ Query.prototype.desc = function(key){
 /**
  * Pushes a `"relation"` onto the query.
  *
- * @param {String} type
- * @param {String} key
+ * @chainable
+ * @param {String} dir The direction.
+ * @param {String} key The key.
+ * @return {this} self.
  * @api private
  */
 
@@ -362,9 +473,11 @@ Query.prototype.relation = function(dir, key){
 /**
  * Pushes a `"constraint"` onto the query.
  *
+ * @chainable
+ * @param {String} key The constraint key.
  * @param {String} op Operator string
- * @param {String} key
- * @param {Object} val
+ * @param {Object} val The constraint value.
+ * @return {this} self.
  * @api public
  *
  * @see http://en.wikipedia.org/wiki/Lagrange_multiplier
@@ -383,8 +496,10 @@ Query.prototype.constraint = function(key, op, val){
  *    query().action('insert', { message: 'Test' });
  *    query().action('insert', [ { message: 'one.' }, { message: 'two.' } ]);
  *
- * @param {String} type
+ * @chainable
+ * @param {String} type The action type.
  * @param {Object|Array} data The data to act on.
+ * @return {this} self.
  * @api private
  */
 
@@ -400,8 +515,10 @@ Query.prototype.action = function(type, data){
 /**
  * Pushes a sort direction onto the query.
  *
- * @param {String}  key   The property to sort on.
- * @param {Integer} dir   Direction it should point (-1, 1, 0).
+ * @chainable
+ * @param {String} key The property to sort on.
+ * @param {Integer} dir Direction it should point (-1, 1, 0).
+ * @return {this} self.
  * @api private
  */
 
@@ -415,6 +532,10 @@ Query.prototype.sort = function(key, dir){
 /**
  * A way to log the query criteria,
  * so you can see if the adapter supports it.
+ *
+ * @chainable
+ * @param {Function} fn The query criteria logging function
+ * @return {this} self.
  */
 
 Query.prototype.explain = function(fn){
@@ -422,17 +543,26 @@ Query.prototype.explain = function(fn){
   return this;
 };
 
+/**
+ * Clone the current `Query` object.
+ *
+ * @return {Query} A cloned `Query` object.
+ */
+
 Query.prototype.clone = function(){
   return new Query(this.name);
 };
 
 /**
+ * Execute the query.
  * XXX: For now, only one query per adapter.
  *      Later, you can query across multiple adapters
  *
  * @see http://en.wikipedia.org/wiki/Query_optimizer
  * @see http://en.wikipedia.org/wiki/Query_plan
  * @see http://homepages.inf.ed.ac.uk/libkin/teach/dbs12/set5.pdf
+ * @param {Function} fn Function that gets called on adapter execution.
+ * @return {Mixed} Whatever `fn` returns on execution.
  */
 
 Query.prototype.exec = function(fn){
@@ -444,10 +574,22 @@ Query.prototype.exec = function(fn){
   return adapter.exec(this, fn);
 };
 
+/**
+ * Validate the query on all adapters.
+ *
+ * @param {Function} fn Function called on query validation.
+ */
+
 Query.prototype.validate = function(fn){
   var adapter = this.adapters && this.adapters[0] || exports.adapters[0];
   validate(this, adapter, fn);
 };
+
+/**
+ * Subscribe to a type of query.
+ *
+ * @param {Function} fn Function executed on each subscriber output.
+ */
 
 Query.prototype.subscribe = function(fn){
   var self = this;
@@ -460,6 +602,9 @@ Query.prototype.subscribe = function(fn){
  * Define another query on the parent scope.
  *
  * XXX: wire this up with the resource (for todomvc).
+ *
+ * @param {String} name A query name.
+ * @return {Query} A `Query` object.
  */
 
 Query.prototype.query = function(name) {
