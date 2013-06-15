@@ -34,6 +34,7 @@ exports.Constraint = Constraint;
  *
  * @param {String} A query name.
  * @return {Query} A query.
+ * @api public
  */
 
 function query(name) {
@@ -76,7 +77,8 @@ exports.validate = validateConstraints;
  *
  * @chainable
  * @param {Adapter} An adapter object.
- * @return {Function} self.
+ * @return {Function} exports The main `query` function.
+ * @api public
  */
 
 exports.use = function(adapter){
@@ -90,6 +92,7 @@ exports.use = function(adapter){
  *
  * @class
  * @param {String} name A query instance's name.
+ * @api public
  */
 
 function Query(name) {
@@ -116,7 +119,8 @@ function Query(name) {
  * @chainable
  * @param {Mixed} name Name of the adapter, or the adapter object itself.
  *   In `package.json`, maybe this is under a `"key": "memory"` property.
- * @return {this} self.
+ * @return {Query}
+ * @api public
  */
 
 Query.prototype.use = function(name){
@@ -131,7 +135,7 @@ Query.prototype.use = function(name){
  * @chainable
  * @param {String} key The starting table or record name.
  * @param {Object} val
- * @return {this} self.
+ * @return {Query}
  * @api public
  */
 
@@ -146,7 +150,7 @@ Query.prototype.start = function(key, val){
  * XXX: http://docs.neo4j.org/chunked/stable/query-return.html
  *
  * @param {String} key A query pattern that you want to be returned.
- * @return {this} self.
+ * @return {Query}
  */
 
 Query.prototype.returns = function(key){
@@ -159,7 +163,8 @@ Query.prototype.returns = function(key){
  *
  * @chainable
  * @param {String} key A record or table name.
- * @returns {this} self.
+ * @return {Query}
+ * @api public
  */
 Query.prototype.select = function(key){
   this._start = this._start || key;
@@ -171,7 +176,8 @@ Query.prototype.select = function(key){
  * Add a WHERE clause.
  *
  * @param {String} key A record or table property/column name.
- * @returns {this} self.
+ * @return {Query}
+ * @api public
  */
 Query.prototype.where = function(key){
   this.context = key;
@@ -191,7 +197,7 @@ Query.prototype.where = function(key){
  *
  * @chainable
  * @param {String} key Name of the data coming to the start node.
- * @return {this} self.
+ * @return {Query}
  * @api public
  */
 
@@ -212,7 +218,7 @@ Query.prototype.incoming = function(key){
  *
  * @chainable
  * @param {String} key Name of the data going out from the start node.
- * @return {this} self.
+ * @return {Query}
  * @api public
  */
 
@@ -229,7 +235,7 @@ Query.prototype.outgoing = function(key){
  *    query().start('users').as('people');
  *
  * @param {String} key The data's new variable name.
- * @return {this} self.
+ * @return {Query}
  * @api public
  */
 
@@ -246,7 +252,7 @@ Query.prototype.as = function(key){
  *
  *    query().start('users').where('likeCount').lte(200);
  *
- * @param {String} key  The property to compare `val` to.
+ * @param {String} key The property to compare `val` to.
  * @param {Number|Date} val The number or date value.
  * @api public
  */
@@ -262,7 +268,8 @@ each(['eq', 'neq', 'gte', 'gt', 'lte', 'lt', 'nin', 'match'], function(operator)
  *
  * @chainable
  * @param {Object} val The constraint value.
- * @returns {this} self.
+ * @return {Query}
+ * @api public
  */
 
 Query.prototype.contains = function(val){
@@ -315,6 +322,7 @@ Query.prototype.all = Query.prototype.find;
  * @param {Object} data Data record.
  * @param {Function} fn Function to be executed on record creation.
  * @return {Mixed} Whatever `fn` returns on the `create` action.
+ * @api public
  */
 
 Query.prototype.create = function(data, fn){
@@ -339,6 +347,7 @@ Query.prototype.create = function(data, fn){
  * @param {Object} data Data record.
  * @param {Function} Function to be executed on record update.
  * @return {Mixed} Whatever `fn` returns on the `update` action.
+ * @api public
  */
 
 Query.prototype.update = function(data, fn){
@@ -349,6 +358,7 @@ Query.prototype.update = function(data, fn){
  * Return the first record that matches the query pattern.
  *
  * @param {Function} fn Function to execute on records after `find` action finishes.
+ * @api public
  */
 
 Query.prototype.first = function(fn){
@@ -362,6 +372,7 @@ Query.prototype.first = function(fn){
  * Return the last record that matches the query pattern.
  *
  * @param {Function} fn Function to execute on records after `find` action finishes.
+ * @api public
  */
 
 Query.prototype.last = function(fn){
@@ -376,7 +387,8 @@ Query.prototype.last = function(fn){
  *
  * @chainable
  * @param {Integer} val The record limit.
- * @return {this} self.
+ * @return {Query}
+ * @api public
  */
 
 Query.prototype.limit = function(val){
@@ -391,7 +403,8 @@ Query.prototype.limit = function(val){
  *
  * @chainable
  * @param {Integer} val The page number.
- * @return {this} self.
+ * @return {Query}
+ * @api public
  */
 
 Query.prototype.page = function(val){
@@ -404,7 +417,8 @@ Query.prototype.page = function(val){
  *
  * @chainable
  * @param {Integer} val The offset value.
- * @return {this} self.
+ * @return {Query}
+ * @api public
  */
 Query.prototype.offset = function(val){
   this.paging.offset = val;
@@ -424,7 +438,7 @@ Query.prototype.offset = function(val){
  *
  * @chainable
  * @param {String} key A property name.
- * @return {this} self.
+ * @return {Query}
  * @api public
  */
 
@@ -445,7 +459,7 @@ Query.prototype.asc = function(key){
  *
  * @chainable
  * @param {String} key A property name.
- * @return {this} self.
+ * @return {Query}
  * @api public
  */
 
@@ -459,7 +473,7 @@ Query.prototype.desc = function(key){
  * @chainable
  * @param {String} dir The direction.
  * @param {String} key The key.
- * @return {this} self.
+ * @return {Query}
  * @api private
  */
 
@@ -477,7 +491,7 @@ Query.prototype.relation = function(dir, key){
  * @param {String} key The constraint key.
  * @param {String} op Operator string
  * @param {Object} val The constraint value.
- * @return {this} self.
+ * @return {Query}
  * @api public
  *
  * @see http://en.wikipedia.org/wiki/Lagrange_multiplier
@@ -499,7 +513,7 @@ Query.prototype.constraint = function(key, op, val){
  * @chainable
  * @param {String} type The action type.
  * @param {Object|Array} data The data to act on.
- * @return {this} self.
+ * @return {Query}
  * @api private
  */
 
@@ -518,7 +532,7 @@ Query.prototype.action = function(type, data){
  * @chainable
  * @param {String} key The property to sort on.
  * @param {Integer} dir Direction it should point (-1, 1, 0).
- * @return {this} self.
+ * @return {Query}
  * @api private
  */
 
@@ -535,7 +549,8 @@ Query.prototype.sort = function(key, dir){
  *
  * @chainable
  * @param {Function} fn The query criteria logging function
- * @return {this} self.
+ * @return {Query}
+ * @api public
  */
 
 Query.prototype.explain = function(fn){
@@ -547,6 +562,7 @@ Query.prototype.explain = function(fn){
  * Clone the current `Query` object.
  *
  * @return {Query} A cloned `Query` object.
+ * @api public
  */
 
 Query.prototype.clone = function(){
@@ -563,6 +579,7 @@ Query.prototype.clone = function(){
  * @see http://homepages.inf.ed.ac.uk/libkin/teach/dbs12/set5.pdf
  * @param {Function} fn Function that gets called on adapter execution.
  * @return {Mixed} Whatever `fn` returns on execution.
+ * @api public
  */
 
 Query.prototype.exec = function(fn){
@@ -578,6 +595,7 @@ Query.prototype.exec = function(fn){
  * Validate the query on all adapters.
  *
  * @param {Function} fn Function called on query validation.
+ * @api public
  */
 
 Query.prototype.validate = function(fn){
@@ -589,6 +607,7 @@ Query.prototype.validate = function(fn){
  * Subscribe to a type of query.
  *
  * @param {Function} fn Function executed on each subscriber output.
+ * @api public
  */
 
 Query.prototype.subscribe = function(fn){
@@ -605,6 +624,7 @@ Query.prototype.subscribe = function(fn){
  *
  * @param {String} name A query name.
  * @return {Query} A `Query` object.
+ * @api public
  */
 
 Query.prototype.query = function(name) {
