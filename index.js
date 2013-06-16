@@ -32,7 +32,7 @@ exports.Constraint = Constraint;
 /**
  * Wrap an array for chaining query criteria.
  *
- * @param {String} A query name.
+ * @param {String} name A query name.
  * @return {Query} A query.
  * @api public
  */
