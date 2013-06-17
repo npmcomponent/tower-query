@@ -76,7 +76,7 @@ exports.validate = validateConstraints;
  *      is to not create circular dependencies.
  *
  * @chainable
- * @param {Adapter} An adapter object.
+ * @param {Adapter} adapter An adapter object.
  * @return {Function} exports The main `query` function.
  * @api public
  */
@@ -345,7 +345,7 @@ Query.prototype.create = function(data, fn){
  *      });
  *
  * @param {Object} data Data record.
- * @param {Function} Function to be executed on record update.
+ * @param {Function} fn Function to be executed on record update.
  * @return {Mixed} Whatever `fn` returns on the `update` action.
  * @api public
  */
