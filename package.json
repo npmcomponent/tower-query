@@ -1,11 +1,16 @@
 {
   "name": "tower-query",
-  "version": "0.1.0pre",
+  "version": "0.1.0",
+  "keywords": ["sql", "orm", "query", "database", "mvc"],
   "main": "./index.js",
   "dependencies": {
-    "tower-validator": "~0.1.0pre",
-    "tower-program": "~0.1.0pre",
+    "tower-validator": "~0.1.0",
+    "tower-program": "~0.1.0",
     "part-each-array": "*",
     "part-is-array": "*"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "http://github.com/tower/query.git"
   }
 }
