@@ -12,8 +12,8 @@
     "nosql"
   ],
   "dependencies": {
-    "tower/validator": "0.1.1",
-    "tower/program": "0.1.1",
+    "tower/validator": "*",
+    "tower/program": "*",
     "part/each-array": "*",
     "part/is-array": "*"
   },
