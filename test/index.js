@@ -11,12 +11,12 @@ var adapter = require('tower-adapter');
 var Constraint = query.Constraint;
 
 describe('query', function(){
-  it('should find minimum-cost maximum-flow', function(){
+  it('should select minimum-cost maximum-flow', function(){
     var topology = query()
       // mapped(user) -> reduced(user)
-      .select('user')
-      .select('facebook.user')
-      .select('twitter.user')
+      .resource('user')
+      .resource('facebook.user')
+      .resource('twitter.user')
       // random constraints purely on the resources
       .where('user.likeCount').gte(10)
       .where('facebook.likeCount').gte(20)
@@ -58,7 +58,7 @@ describe('query', function(){
     // build a dependency graph, must be acyclic
   });
 
-  it('should find minimum-cost maximum-flow in an easier way (graph api)', function(){
+  it('should select minimum-cost maximum-flow in an easier way (graph api)', function(){
     //var topology = query()
     //  .start('user')
     //  .incoming('facebook.user')
@@ -68,19 +68,17 @@ describe('query', function(){
   it('should execute adapter', function(done){
     adapter('example')
       .resource('user')
-        .action('find');
+        .action('select');
 
     adapter('example').exec = function(query, fn){
-      assert(1 === query.selects.length);
+      assert(1 === query.resources.length);
       fn();
     }
 
     query()
       .use('example')
-      .select('user')
-      .exec(function(){
-        done();
-      });
+      .resource('user')
+      .select(done);
   });
 
   it('should save named queries', function(){
@@ -96,15 +94,15 @@ describe('query', function(){
     // adapter('example')
     adapter('memory')
       .resource('foo')
-        .action('find')
+        .action('select')
           .param('bar', 'string')
             .validate('in', [ 'a', 'b' ]);
 
     query()
       .use('memory')
-      .select('foo')
+      .resource('foo')
       .where('bar').eq('x')
-      .action('find')
+      .action('select')
       .validate(function(err){
         assert(1 === err.length);
         // assert.deepEqual([ 'Invalid foo.bar' ], err);

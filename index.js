@@ -98,7 +98,7 @@ exports.use = function(adapter){
 function Query(name) {
   this.name = name;
   this.constraints = [];
-  this.selects = [];
+  this.resources = [];
   this.sorting = [];
   this.paging = {};
   // XXX: accomplish both joins and graph traversals.
@@ -154,7 +154,7 @@ Query.prototype.start = function(key, val){
  */
 
 Query.prototype.returns = function(key){
-  this.selects.push(queryAttr(key, this._start));
+  this.resources.push(queryAttr(key, this._start));
   return this;
 };
 
@@ -166,9 +166,9 @@ Query.prototype.returns = function(key){
  * @return {Query}
  * @api public
  */
-Query.prototype.select = function(key){
+Query.prototype.resource = function(key){
   this._start = this._start || key;
-  this.selects.push(queryAttr(key, this._start));
+  this.resources.push(queryAttr(key, this._start));
   return this;
 };
 
@@ -241,7 +241,7 @@ Query.prototype.outgoing = function(key){
 
 Query.prototype.as = function(key){
   // XXX: todo
-  this.selects[this.selects.length - 1].alias = key;
+  this.resources[this.resources.length - 1].alias = key;
   return this;
 };
 
@@ -290,8 +290,7 @@ Query.prototype.contains = function(val){
  */
 
 each([
-    'find'
-  , 'remove'
+    'select'
   , 'pipe'
   , 'stream'
   , 'count'
@@ -301,8 +300,6 @@ each([
     return this.action(action).exec(fn);
   }
 });
-
-Query.prototype.all = Query.prototype.find;
 
 /**
  * Create one or more records.
@@ -352,6 +349,12 @@ Query.prototype.create = function(data, fn){
 
 Query.prototype.update = function(data, fn){
   return this.action('update', data).exec(fn);
+};
+
+Query.prototype.remove = function(data, fn){
+  return 2 === arguments.length
+    ? this.action('remove', data).exec(fn)
+    : this.action('remove').exec(data);
 };
 
 /**
@@ -587,7 +590,7 @@ Query.prototype.exec = function(fn){
   var adapter = this.adapters && this.adapters[0] || exports.adapters[0];
   this.validate(function(){});
   if (this.errors && this.errors.length) return fn(this.errors);
-  if (!this.selects[0]) throw new Error('Must `.select(resourceName)`');
+  if (!this.resources[0]) throw new Error('Must `.select(resourceName)`');
   return adapter.exec(this, fn);
 };
 
