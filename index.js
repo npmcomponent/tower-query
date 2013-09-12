@@ -168,7 +168,7 @@ Query.prototype.returns = function(key){
  */
 Query.prototype.resource = function(key){
   this._start = this._start || key;
-  this.resources.push(queryAttr(key, this._start));
+  this.resources.push(queryModel(key, this._start));
   return this;
 };
 
