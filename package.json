@@ -1,16 +1,20 @@
 {
   "name": "tower-query",
-  "version": "0.1.0",
-  "keywords": ["sql", "orm", "query", "database", "mvc"],
-  "main": "./index.js",
+  "description": "Tower query component",
+  "version": "0.1.1",
+  "keywords": [
+    "pipes",
+    "data",
+    "criteria",
+    "database",
+    "graph database",
+    "nosql"
+  ],
   "dependencies": {
-    "tower-validator": "~0.1.0",
-    "tower-program": "~0.1.0",
-    "part-each-array": "*",
-    "part-is-array": "*"
+    "tower-validator": "git://github.com/npmcomponent/tower-validator.git",
+    "tower-program": "git://github.com/npmcomponent/tower-program.git",
+    "part-each-array": "git://github.com/npmcomponent/part-each-array.git",
+    "part-is-array": "git://github.com/npmcomponent/part-is-array.git"
   },
-  "repository": {
-    "type" : "git",
-    "url" : "http://github.com/tower/query.git"
-  }
+  "license": "MIT"
 }

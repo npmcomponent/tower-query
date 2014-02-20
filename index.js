@@ -3,8 +3,8 @@
  * Module dependencies.
  */
 
-var each = require('part-each-array');
-var isArray = require('part-is-array');
+// commented out by npm-component: var each = require('part-each-array');
+// commented out by npm-component: var isArray = require('part-is-array');
 var Constraint = require('./lib/constraint');
 var validate = require('./lib/validate');
 var validateConstraints = require('./lib/validate-constraints');
